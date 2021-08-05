@@ -286,7 +286,6 @@ int main(int argc, char *argv[])
   fprintf(OUT,"%g %g %g %g %g %g %g \n",deltacp,a0,b0,c0,a1,b1,c1);
 //////////////// End /////////////////////
 
-
   }
   return 0;  
 }
