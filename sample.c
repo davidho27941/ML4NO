@@ -16,7 +16,6 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_spline.h>
 
-
  double degree    = M_PI/180;
 /***************************************************************************
  *                            M A I N   P R O G R A M                      *
