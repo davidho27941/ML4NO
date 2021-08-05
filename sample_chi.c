@@ -71,6 +71,7 @@
 
   
 
+
 //  /* 計算chi2 without projection */ //參數:{系統誤差on_off:[GLB_ON,GLB_OFF], 選定實驗EXP:[0,1,GLB_ALL], theta23:[40,50], true value的deltacp}
 // double chi2 (int on_off, int EXP ,double theta23, double deltacp)
 // {
