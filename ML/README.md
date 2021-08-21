@@ -1,6 +1,6 @@
 # Data
 Store on gpu 140.114.94.240
-* n1000000_0716.npz -- 3 sigma gaussian on theta12, theta13, theta23, and sdm, deltacp half on 0 and 180  
+* n1000000_0716.npz -- gaussian on theta12, theta13, theta23, and sdm, deltacp half on 0 and 180  
 * n1000000_0728.npz -- flat on theta12, theta13, sdm, theta23 half on 45 and else flat, deltacp half on 0 and 180
 * n1000000_0803.npz -- fixed theta12 and sdm, flat on theta13, theta23 half on 45 and else flat, deltacp half on 0 and 180 (the preferred dataset for classification)
 * n1000000_0804_all_flat.npz -- fixed theta12 and sdm, flat on theta13, theta23, delta (the preferred dataset for regression)
