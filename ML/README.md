@@ -14,6 +14,9 @@ A python notebook to inspect the features of the input data.
 * The histogram of the feature
 * The correlation matrix of the ve_dune
 
+
+* Poisson_Compare_Train.ipynb -- Compare the poisson generated with the Train spectrum
+
 # Classification Folder
 
 * ak -- build ak model on all 12 classes (octant = {-1, 0, 1}, cpv = {0, 1}, mo = {-1, 1})
@@ -27,10 +30,12 @@ A python notebook to inspect the features of the input data.
 * ak-delta.ipynb -- Most common training deltacp model.
 * sigmoid-delta-poisson.ipynb --  Hand written structure to make the last layer sigmoid.
 
+
 * ak-theta23-furthurTrain.ipynb -- Input trained theta23 model and train with perturbation.
 * ak-theta23-poisson.ipynb -- Train theta23 model with perturbation directly.
 * ak-theta23-testcut.ipynb -- Train theta23 model with selected inputs.
 * ak-theta23.ipynb -- Most common training theta23 model.
+
 
 * models.ipynb -- to check the models created (the siffix represent the data used to train the model)
 * contour.ipynb -- to generate 1 and 2 sigma contour
