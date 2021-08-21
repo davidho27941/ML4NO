@@ -8,10 +8,12 @@ Store on gpu 140.114.94.240
 * NuFit_IO.npz -- the spectrum created by NuFit inverse ordering parameters
 * NuFit_NO.npz -- the spectrum created by NuFit normal ordering parameters
 
-# Feature files
+# Features files
 A python notebook to inspect the features of the input data.
 * The name of the features
 * The histogram of the feature
+
+# Others
 * The correlation matrix of the ve_dune
 
 
