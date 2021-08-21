@@ -12,11 +12,9 @@ Store on gpu 140.114.94.240
 A python notebook to inspect the features of the input data.
 * The name of the features
 * The histogram of the feature
-
-# Others
 * The correlation matrix of the ve_dune
 
-
+# Others
 * Poisson_Compare_Train.ipynb -- Compare the poisson generated with the Train spectrum
 
 # Classification Folder
