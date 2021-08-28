@@ -182,11 +182,6 @@ double chi2_proj (int on_off, int EXP ,double theta23, double deltacp)
   //   glbSetInputErrors(input_errors);
   //   glbSetCentralValues(true_values); 
 
-  /* 設定Prior OFF */   
-    glbDefineParams(input_errors,0,0,0,0,0,0);
-    glbSetDensityParams(input_errors,0,GLB_ALL);
-    glbSetInputErrors(input_errors);
-    glbSetCentralValues(true_values); 
  
   /* 設定Projection */   
     glb_projection projection_cp = glbAllocProjection();
@@ -198,38 +193,66 @@ double chi2_proj (int on_off, int EXP ,double theta23, double deltacp)
   /* 1. 計算test value中 (delta_cp = 0, NO) 的chi_0_N */
     glbDefineParams(test_values, theta12_N*degree, theta13_N*degree, theta23*degree,  0*degree , 1e-5*sdm_g_N, 1e-3*ldm_g_N);  
     glbSetDensityParams(test_values,1.0,GLB_ALL); 
-    glbSetOscillationParameters(test_values);
+    glbSetOscillationParameters(true_values);
     glbSetRates();
   double chi2_0_N;
   glbSwitchSystematics(EXP,GLB_ALL,on_off);
-  chi2_0_N = glbChiNP(true_values,NULL,EXP);
+
+    /* 設定Prior OFF */   
+    glbDefineParams(input_errors,0,0,0,0,0,0);
+    glbSetDensityParams(input_errors,0,GLB_ALL);
+    glbSetInputErrors(input_errors);
+    glbSetCentralValues(test_values); 
+
+  chi2_0_N = glbChiNP(test_values,NULL,EXP);
 
   /* 2. 計算test value中 (delta_cp = 180, NO) 的chi2_pi_N */
     glbDefineParams(test_values, theta12_N*degree, theta13_N*degree, theta23*degree,  180*degree , 1e-5*sdm_g_N, 1e-3*ldm_g_N);  
     glbSetDensityParams(test_values,1.0,GLB_ALL); 
-    glbSetOscillationParameters(test_values);
+    glbSetOscillationParameters(true_values);
     glbSetRates();
   double chi2_pi_N;
   glbSwitchSystematics(EXP,GLB_ALL,on_off);
-  chi2_pi_N = glbChiNP(true_values,NULL,EXP);
+
+    /* 設定Prior OFF */   
+    glbDefineParams(input_errors,0,0,0,0,0,0);
+    glbSetDensityParams(input_errors,0,GLB_ALL);
+    glbSetInputErrors(input_errors);
+    glbSetCentralValues(test_values); 
+
+  chi2_pi_N = glbChiNP(test_values,NULL,EXP);
 
   /* 3. 計算test value中 (delta_cp = 0, IO) 的chi_0_I */
     glbDefineParams(test_values, theta12_I*degree, theta13_I*degree, theta23*degree,  0*degree , 1e-5*sdm_g_I, 1e-3*ldm_g_I);  
     glbSetDensityParams(test_values,1.0,GLB_ALL); 
-    glbSetOscillationParameters(test_values);
+    glbSetOscillationParameters(true_values);
     glbSetRates();
   double chi2_0_I;
   glbSwitchSystematics(EXP,GLB_ALL,on_off);
-  chi2_0_I = glbChiNP(true_values,NULL,EXP);
+
+    /* 設定Prior OFF */   
+    glbDefineParams(input_errors,0,0,0,0,0,0);
+    glbSetDensityParams(input_errors,0,GLB_ALL);
+    glbSetInputErrors(input_errors);
+    glbSetCentralValues(test_values); 
+
+  chi2_0_I = glbChiNP(test_values,NULL,EXP);
 
   /* 4. 計算test value中 (delta_cp = 180, IO) 的chi2_pi_I */
     glbDefineParams(test_values, theta12_I*degree, theta13_I*degree, theta23*degree,  180*degree , 1e-5*sdm_g_I, 1e-3*ldm_g_I);  
     glbSetDensityParams(test_values,1.0,GLB_ALL); 
-    glbSetOscillationParameters(test_values);
+    glbSetOscillationParameters(true_values);
     glbSetRates();
   double chi2_pi_I;
   glbSwitchSystematics(EXP,GLB_ALL,on_off);
-  chi2_pi_I = glbChiNP(true_values,NULL,EXP);
+
+    /* 設定Prior OFF */   
+    glbDefineParams(input_errors,0,0,0,0,0,0);
+    glbSetDensityParams(input_errors,0,GLB_ALL);
+    glbSetInputErrors(input_errors);
+    glbSetCentralValues(test_values);
+
+  chi2_pi_I = glbChiNP(test_values,NULL,EXP);
 
   /* 取最小的chi2 */
 // printf("%g %g %g %g\n",chi2_0_N, chi2_pi_N, chi2_0_I, chi2_pi_I);
