@@ -210,7 +210,12 @@ int main(int argc, char *argv[])
   glbGetEnergyWindowBins(exp, channel, &ew_low, &ew_high);
   
   double *true_rates = glbGetRuleRatePtr(exp, channel);
-  for (i=ew_low; i <= ew_high; i++){fprintf(OUT,"%g ",true_rates[i]);}
+int count = 0;
+
+  for (i=ew_low; i <= ew_high; i++){fprintf(OUT,"%g ",true_rates[i]);
+  count += 1;
+  }
+    // printf("count = %d \n",count);
   //printf("%i %i %i \n",exp,channel,ew_high-ew_low);
   }
   }
