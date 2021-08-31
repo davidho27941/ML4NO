@@ -215,7 +215,7 @@ int count = 0;
   for (i=ew_low; i <= ew_high; i++){fprintf(OUT,"%g ",true_rates[i]);
   count += 1;
   }
-    // printf("count = %d \n",count);
+  printf("count = %d \n",count);
   //printf("%i %i %i \n",exp,channel,ew_high-ew_low);
   }
   }
