@@ -37,7 +37,7 @@ double min(int n, ...)
     n是參數個數，後面才是參數本身 
   */
   int i;
-  double min_num = 10000000;
+  double min_num = 1e20;
   double input;
   va_list vl;
   va_start(vl,n);
@@ -321,19 +321,26 @@ double chi2_poisson(int exp, int rule, int np, double *x, double *errors, void* 
 }
 
 double a ,b, c, d; 
+double chi_0, chi_pi;
 
-//參數:{CP : [0, 1] , CPV Hypothesis的deltacp}
+/* 定義 Test Statistic (Delta Chi-Square) */
+//參數:{CP : [0, 180, 1] , CPV Hypothesis的deltacp}  
+// 0 : CPC at deltacp=0; 180 : CPC at deltacp=180; 1 : CPV at deltacp
 double delta_chi2 (double CP , double deltacp) //根據CP的假設，生成Poisson Sample，計算其test statistic
 {
-    glb_params test_values_cpc = glbAllocParams(); 
+    glb_params test_values_cpc_0 = glbAllocParams(); 
+    glb_params test_values_cpc_pi = glbAllocParams(); 
     glb_params test_values_cpv = glbAllocParams(); 
     glb_params input_errors = glbAllocParams(); 
     glb_params minimum = glbAllocParams(); //////////
 
+    /* 定義test_values_cpc_0 */ 
+      glbDefineParams(test_values_cpc_0,theta12_N*degree,theta13_N*degree,theta23_N*degree, 0*degree ,1e-5*sdm_N,1e-3*ldm_N);
+      glbSetDensityParams(test_values_cpc_0,1.0,GLB_ALL);
 
-    /* 定義test_values_cpc */ 
-      glbDefineParams(test_values_cpc,theta12_N*degree,theta13_N*degree,theta23_N*degree, 0*degree ,1e-5*sdm_N,1e-3*ldm_N);
-      glbSetDensityParams(test_values_cpc,1.0,GLB_ALL);
+    /* 定義test_values_cpc_pi */ 
+      glbDefineParams(test_values_cpc_pi,theta12_N*degree,theta13_N*degree,theta23_N*degree, 180*degree ,1e-5*sdm_N,1e-3*ldm_N);
+      glbSetDensityParams(test_values_cpc_pi,1.0,GLB_ALL);      
 
     /* 定義test_values_cpv */                                                         //deltacp為Input的值
       glbDefineParams(test_values_cpv,theta12_N*degree,theta13_N*degree,theta23_N*degree, deltacp*degree ,1e-5*sdm_N,1e-3*ldm_N);
@@ -342,7 +349,7 @@ double delta_chi2 (double CP , double deltacp) //根據CP的假設，生成Poiss
     /* 設定Projection */   
       glb_projection projection_cp = glbAllocProjection();
       //GLB_FIXED/GLB_FREE                theta12    theta13  theta23    deltacp     m21        m31
-      glbDefineProjection(projection_cp, GLB_FREE, GLB_FREE, GLB_FREE, GLB_FIXED, GLB_FREE, GLB_FREE);//deltacp theta12 m21 不動，其他可變
+      glbDefineProjection(projection_cp, GLB_FIXED, GLB_FREE, GLB_FREE, GLB_FIXED, GLB_FIXED, GLB_FREE);//deltacp theta12 m21 不動，其他可變
       glbSetDensityProjectionFlag(projection_cp,GLB_FIXED,GLB_ALL);//matter density不變
       glbSetProjection(projection_cp);
    
@@ -354,23 +361,39 @@ double delta_chi2 (double CP , double deltacp) //根據CP的假設，生成Poiss
       glbSetDensityParams(input_errors,0,GLB_ALL);
       glbSetInputErrors(input_errors);
 
-  if (CP == 0){ //CPC
-
-    /* 根據CPC的假設，生成Poisson True Spectrum */   
-      do_poisson_fluctuation(test_values_cpc);
+/* 判斷CP的假設 */ 
+  if (CP == 0){ //CPC at deltacp=0;
+    // printf("抵達CP==0 \n");
+    /* 根據CPC_0的假設，生成Poisson True Spectrum */   
+      do_poisson_fluctuation(test_values_cpc_0);
     
     /* 設定Prior (3 sigma range)*/
       glbRegisterPriorFunction(prior_3sigma_NO,NULL,NULL,NULL);
 
-    /* 計算Chi square under cpc */ 
-      glbSetOscillationParameters(test_values_cpc);
+    /* 計算Chi square under cpc_0 */ 
+      glbSetOscillationParameters(test_values_cpc_0);
       glbSetRates();
       glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
       glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
-      glbSetCentralValues(test_values_cpc); 
-      a = glbChiNP(test_values_cpc, minimum ,GLB_ALL);
+      glbSetCentralValues(test_values_cpc_0); 
+      chi_0 = glbChiNP(test_values_cpc_0, minimum ,GLB_ALL);
       // glbPrintParams(stdout,minimum); //////////
-    
+      // printf("%g \n",chi_0);
+
+    /* 計算Chi square under cpc_pi */ 
+      glbSetOscillationParameters(test_values_cpc_pi);
+      glbSetRates();
+      glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
+      glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
+      glbSetCentralValues(test_values_cpc_pi); 
+      chi_pi = glbChiNP(test_values_cpc_pi, minimum ,GLB_ALL);
+      // glbPrintParams(stdout,minimum); //////////
+      // printf("%g \n",chi_pi);
+
+    /* 取 cpc_0 和 cpc_pi 兩者之最小值 */   
+      a = min(2, chi_0, chi_pi);
+      // printf("%g \n",a);
+
     /* 計算Chi square under cpv */ 
       glbSetOscillationParameters(test_values_cpv);
       glbSetRates();
@@ -382,7 +405,56 @@ double delta_chi2 (double CP , double deltacp) //根據CP的假設，生成Poiss
 
     /* 輸出Delta Chi square */ 
     // printf("a = %g, b = %g  \n",a,b);
+    // printf("a - b = %g  \n",a-b);
       return a - b ;
+  }
+
+  if (CP == 180){ //CPC at deltacp=180;
+    // printf("抵達CP==180 \n");
+    /* 根據CPC_180的假設，生成Poisson True Spectrum */   
+      do_poisson_fluctuation(test_values_cpc_pi);
+    
+    /* 設定Prior (3 sigma range)*/
+      glbRegisterPriorFunction(prior_3sigma_NO,NULL,NULL,NULL);
+
+    /* 計算Chi square under cpc_0 */ 
+      glbSetOscillationParameters(test_values_cpc_0);
+      glbSetRates();
+      glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
+      glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
+      glbSetCentralValues(test_values_cpc_0); 
+      chi_0 = glbChiNP(test_values_cpc_0, minimum ,GLB_ALL);
+      // glbPrintParams(stdout,minimum); //////////
+      // printf("%g \n",chi_0);
+
+    /* 計算Chi square under cpc_pi */ 
+      glbSetOscillationParameters(test_values_cpc_pi);
+      glbSetRates();
+      glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
+      glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
+      glbSetCentralValues(test_values_cpc_pi); 
+      chi_pi = glbChiNP(test_values_cpc_pi, minimum ,GLB_ALL);
+      // glbPrintParams(stdout,minimum); //////////
+      // printf("%g \n",chi_pi);
+
+    /* 取 cpc_0 和 cpc_pi 兩者之最小值 */   
+      a = min(2, chi_0, chi_pi);
+      // printf("%g \n",a);
+
+    /* 計算Chi square under cpv */ 
+      glbSetOscillationParameters(test_values_cpv);
+      glbSetRates();
+      glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
+      glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
+      glbSetCentralValues(test_values_cpv); 
+      b = glbChiNP(test_values_cpv,minimum,GLB_ALL);
+      // glbPrintParams(stdout,minimum); //////////
+
+    /* 輸出Delta Chi square */ 
+    // printf("a = %g, b = %g  \n",a,b);
+    // printf("a - b = %g  \n",a-b);
+      return a - b ;
+
   }
 
   if (CP == 1){ //CPV
@@ -393,14 +465,29 @@ double delta_chi2 (double CP , double deltacp) //根據CP的假設，生成Poiss
     /* 設定Prior (3 sigma range)*/
       glbRegisterPriorFunction(prior_3sigma_NO,NULL,NULL,NULL);    
 
-    /* 計算Chi square under cpc */ 
-      glbSetOscillationParameters(test_values_cpc);
+    /* 計算Chi square under cpc_0 */ 
+      glbSetOscillationParameters(test_values_cpc_0);
       glbSetRates();
       glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
       glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
-      glbSetCentralValues(test_values_cpc); 
-      c = glbChiNP(test_values_cpc,minimum,GLB_ALL);
+      glbSetCentralValues(test_values_cpc_0); 
+      chi_0 = glbChiNP(test_values_cpc_0, minimum ,GLB_ALL);
       // glbPrintParams(stdout,minimum); //////////
+      // printf("%g \n",chi_0);
+
+    /* 計算Chi square under cpc_pi */ 
+      glbSetOscillationParameters(test_values_cpc_pi);
+      glbSetRates();
+      glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
+      glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
+      glbSetCentralValues(test_values_cpc_pi); 
+      chi_pi = glbChiNP(test_values_cpc_pi, minimum ,GLB_ALL);
+      // glbPrintParams(stdout,minimum); //////////
+      // printf("%g \n",chi_pi);
+
+    /* 取 cpc_0 和 cpc_pi 兩者之最小值 */   
+      c = min(2, chi_0, chi_pi);
+      // printf("%g \n",c);
 
     /* 計算Chi square under cpv */ 
       glbSetOscillationParameters(test_values_cpv);
@@ -412,12 +499,12 @@ double delta_chi2 (double CP , double deltacp) //根據CP的假設，生成Poiss
       // glbPrintParams(stdout,minimum); //////////
 
     /* 輸出Delta Chi square */ 
-      // printf("a = %g, b = %g  \n",a,b);
+    // printf("c = %g, d = %g  \n",c,d);
+    // printf("c - d = %g  \n",c-d);
       return c - d ;
   }
 }
 
-double k,l,m,n;
 
 int main(int argc, char *argv[])
 { 
@@ -428,19 +515,38 @@ int main(int argc, char *argv[])
     glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
 
     FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
+                                      double angle = 90;
 
-int TOTALsample = 1000;
+int TOTALsample = 10;
+double q0, q1;
+fprintf(OUT," CPV 90度 \n");
+fprintf(OUT," delta_x_0 x_cpc_0 x_cpv_0 delta_x_1 x_cpc_1 x_cpv_1 \n");
   for (int count = 0; count < TOTALsample; count++)
-  { printf("%d \n",count); //看進度
-  
-    double q0 = delta_chi2(0 , 90);
-    k = a;
-    l = b;
-    double q1 = delta_chi2(1 , 90);
-    m = c;
-    n = d;
+  { // printf("%d \n",count); //看進度
+  // for(double angle = 0; angle <= 90; angle = angle +1){
+    // printf("%g \n",angle); //看進度
+    a = 0;
+    b = 0;
+    if(count%2 == 0){
+      q0 = delta_chi2(0 , angle);
+      fprintf(OUT," %g ", q0);   
+      fprintf(OUT," %g %g ", a , b);  
+      q1 = delta_chi2(1 , angle);
+      fprintf(OUT," %g ", q1); 
+      fprintf(OUT," %g %g ", c , d);   
+      printf("%d \n",count);
+    }
+    else{
+      q0 = delta_chi2(180 , angle);
+      fprintf(OUT," %g ", q0);  
+      fprintf(OUT," %g %g ", a , b); 
+      q1 = delta_chi2(1 , angle);
+      fprintf(OUT," %g ", q1); 
+      fprintf(OUT," %g %g ", c , d);      
+      printf("%d \n",count);
+    }
 
-    fprintf(OUT," %g %g  \n ", q0, q1);
+    fprintf(OUT," \n");
   }
   
   return 0;  
