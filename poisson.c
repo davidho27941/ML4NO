@@ -20,10 +20,10 @@
   double degree    = M_PI/180;
 
 /* Define Poisson True Value Spectrum */
-  double ve_dune_poisson[66];
-  double vebar_dune_poisson[66];
-  double vu_dune_poisson[66];
-  double vubar_dune_poisson[66];
+  double ve_dune_poisson[70];
+  double vebar_dune_poisson[70];
+  double vu_dune_poisson[70];
+  double vubar_dune_poisson[70];
 
   double ve_t2hk_poisson[8];
   double vu_t2hk_poisson[12];
@@ -271,36 +271,46 @@ int do_poisson_fluctuation(glb_params test_values)
   // for (i=ew_low; i <= ew_high; i++) {
   //   printf("%g ",ve_dune[i]);}
   //   printf("\n");
+  //   printf("\n");
+  
+  // for (i=0; i < 66; i++) {
+  //   printf("%g ",ve_dune[i]);}
+  //   printf("\n");
 
   for (int exp=0; exp <= 1; exp++){
       int rule_max= glbGetNumberOfRules(exp);
       for (int rule = 0; rule < rule_max; rule++){
         glbGetEnergyWindowBins(exp, rule, &ew_low, &ew_high);
-
+      // printf("ew_low = %d, ew_high = %d ",ew_low,ew_high);
     //以下開始判斷是哪個Spectrum
     if (exp == 0){
       if (rule == 0){
         for (i=ew_low; i <= ew_high; i++) {
         ve_dune_poisson[i] = random_poisson(ve_dune[i]);
         //printf("%g ",ve_dune_poisson[i]);
+        // printf("%d ",i);
         }
       }
       if (rule == 1){
         for (i=ew_low; i <= ew_high; i++) {
         vebar_dune_poisson[i] = random_poisson(vebar_dune[i]);
         //printf("%g ",vebar_dune_poisson[i]);
+        // printf("%d ",i);
         }
       }
+
       if (rule == 2){
         for (i=ew_low; i <= ew_high; i++) {
         vu_dune_poisson[i] = random_poisson(vu_dune[i]);
         //printf("%g ",vu_dune_poisson[i]);
+        // printf("%d ",i);
         }
       }
       if (rule == 3){
         for (i=ew_low; i <= ew_high; i++) {
         vubar_dune_poisson[i] = random_poisson(vubar_dune[i]);
         //printf("%g ",vubar_dune_poisson[i]);
+        // printf("%d ",i);
         }
       }
     }
@@ -310,30 +320,44 @@ int do_poisson_fluctuation(glb_params test_values)
         for (i=ew_low; i <= ew_high; i++) {
         ve_t2hk_poisson[i] = random_poisson(ve_t2hk[i]);
         //printf("%g ",ve_t2hk_poisson[i]);
+        // printf("%d ",i);
         }
       }
       if (rule == 1){
         for (i=ew_low; i <= ew_high; i++) {
         vu_t2hk_poisson[i] = random_poisson(vu_t2hk[i]);
         //printf("%g ",vu_t2hk_poisson[i]);
+        // printf("%d ",i);
         }
       }
       if (rule == 2){
         for (i=ew_low; i <= ew_high; i++) {
         vebar_t2hk_poisson[i] = random_poisson(vebar_t2hk[i]);
         //printf("%g ",vebar_t2hk_poisson[i]);
+        // printf("%d ",i);
         }
       }
       if (rule == 3){
         for (i=ew_low; i <= ew_high; i++) {
         vubar_t2hk_poisson[i] = random_poisson(vubar_t2hk[i]);
         //printf("%g ",vubar_t2hk_poisson[i]);
+        // printf("%d ",i);
         }
       }
     }
       }
   } 
   //printf("\n");
+
+  // //printf("\n vebar_dune_poisson_65 = %g\n ",vebar_dune_poisson[65]);
+  // int ew_low9, ew_high9, r; 
+  // glbGetEnergyWindowBins(0, 3, &ew_low9, &ew_high9);
+  // for (r=ew_low9 ;r <= ew_high9; r++) {
+  // printf("%g ",vubar_dune_poisson[r]);
+  // //printf("%d ",r);
+  // }  
+  // printf("\n"); 
+
   return 0;
 }
 
@@ -351,6 +375,18 @@ int print_spectrum(){
   }
           printf("\n");
           return 0;
+}
+
+/* 單一光譜測試 */
+int print_one_spectrum(int exp, int rule){
+  int ew_low, ew_high, j;
+
+  glbGetEnergyWindowBins(exp, rule, &ew_low, &ew_high);
+  double *true_rates = glbGetRuleRatePtr(exp, rule);
+  for (j=ew_low; j <= ew_high; j++) {
+  printf("%g ",true_rates[j]);}
+  printf("\n");
+            return 0;
 }
 
 /* 定義 Chi Square */
@@ -465,7 +501,7 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
       glbSetDensityProjectionFlag(projection_cp_fixed,GLB_FIXED,GLB_ALL);//matter density不變
 
       //GLB_FIXED/GLB_FREE                      theta12    theta13  theta23    deltacp     m21        m31
-      glbDefineProjection(projection_cp_free,  GLB_FIXED, GLB_FREE, GLB_FREE, GLB_FIXED, GLB_FIXED, GLB_FREE);// theta12 m21 不動，其他可變
+      glbDefineProjection(projection_cp_free,  GLB_FIXED, GLB_FREE, GLB_FREE, GLB_FREE, GLB_FIXED, GLB_FREE);// theta12 m21 不動，其他可變
       glbSetDensityProjectionFlag(projection_cp_free,GLB_FIXED,GLB_ALL);//matter density不變
 
    
@@ -513,7 +549,9 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
           do_poisson_fluctuation(test_values_cpv_IO);
           }
       }
+
   //
+  
   /* 計算CPC Hypothesis (4種情況)*/
 
     /* 設定Prior (3 sigma range, Normal Ordering)*/
@@ -529,8 +567,43 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
         chi_0_NO = glbChiNP(test_values_cpc_0_NO, minimum ,EXP);
         // glbPrintParams(stdout,minimum); //////////
         printf("chi_0_NO = %g \n",chi_0_NO);
-                                                                   //glbSetOscillationParameters(minimum);
-                                                                                      //print_spectrum() ;
+                                                              //      glbSetOscillationParameters(minimum);
+                                                              //      glbSetRates();
+                                                              //                         print_one_spectrum(0,1) ;
+
+                                                              // double fit_rate;
+                                                              // double chi2_dune = 0;
+                                                              // int ew_low, ew_high, k;
+                                                              // // double *signal_fit_rate = glbGetSignalFitRatePtr(0, 0);
+                                                              // // double *bg_fit_rate     = glbGetBGFitRatePtr(0, 0);
+                                                              // // glbGetEnergyWindowBins(0, 0, &ew_low, &ew_high);
+                                                              // // for (k=ew_low; k <= ew_high; k++) {
+                                                              // // fit_rate = signal_fit_rate[k] + bg_fit_rate[k];
+                                                              // // chi2_dune += poisson_likelihood(ve_dune_poisson[k], fit_rate);} 
+
+                                                              // double *signal_fit_rate1 = glbGetSignalFitRatePtr(0, 1);
+                                                              // double *bg_fit_rate1     = glbGetBGFitRatePtr(0, 1);
+                                                              // glbGetEnergyWindowBins(0, 1, &ew_low, &ew_high);
+                                                              // for (k=ew_low; k <= ew_high; k++) {
+                                                              // fit_rate = signal_fit_rate1[k] + bg_fit_rate1[k];
+                                                              // // printf("%g ",fit_rate);
+                                                              // chi2_dune += poisson_likelihood(vebar_dune_poisson[k], fit_rate);}    
+                                                              // printf("\n");
+
+                                                              // // double *signal_fit_rate2 = glbGetSignalFitRatePtr(0, 2);
+                                                              // // double *bg_fit_rate2     = glbGetBGFitRatePtr(0, 2);
+                                                              // // glbGetEnergyWindowBins(0, 2, &ew_low, &ew_high);
+                                                              // // for (k=ew_low; k <= ew_high; k++) {
+                                                              // // fit_rate = signal_fit_rate2[k] + bg_fit_rate2[k];
+                                                              // // chi2_dune += poisson_likelihood(vu_dune_poisson[k], fit_rate);}    
+
+                                                              // // double *signal_fit_rate3 = glbGetSignalFitRatePtr(0, 3);
+                                                              // // double *bg_fit_rate3     = glbGetBGFitRatePtr(0, 3);
+                                                              // // glbGetEnergyWindowBins(0, 3, &ew_low, &ew_high);
+                                                              // // for (k=ew_low; k <= ew_high; k++) {
+                                                              // // fit_rate = signal_fit_rate3[k] + bg_fit_rate3[k];
+                                                              // // chi2_dune += poisson_likelihood(vubar_dune_poisson[k], fit_rate);}    
+                                                              // printf("chi2_of_v_dune = %g \n",chi2_dune);                                                              
 
       /* 計算Chi square under cpc_pi_NO */ 
         glbSetProjection(projection_cp_fixed); //設定Projection deltacp_Fixed
@@ -590,8 +663,17 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
       // glbPrintParams(stdout,test_values_cpv_NO); //////////
       // glbPrintParams(stdout,minimum); //////////
       printf("chi_cpv_NO = %g \n",chi_cpv_NO);
-                                                            //glbSetOscillationParameters(minimum);
-                                                                            //print_spectrum() ;
+                                                                  //  glbSetOscillationParameters(minimum);
+                                                                  //  glbSetRates();
+                                                                  //                     print_one_spectrum(0,0) ;
+                                                                  //       double chi2_dune1 = 0;
+                                                                  //       double *fit_rate1= glbGetRuleRatePtr(0, 0);
+                                                                  //       int ew_low1, ew_high1, k1;
+                                                                  //       glbGetEnergyWindowBins(0, 0, &ew_low1, &ew_high1);
+                                                                  //       for (k1=ew_low1; k1 <= ew_high1; k1++) {
+                                                                  //       chi2_dune1 += poisson_likelihood(ve_dune_poisson[k1], fit_rate1[k1]);}
+                                                                  //       printf("chi2_of_ve_dune = %g \n",chi2_dune1);
+                                                            
 
     /* 設定Prior (3 sigma range, Inverse Ordering)*/
       glbRegisterPriorFunction(prior_3sigma_IO,NULL,NULL,NULL);
@@ -628,8 +710,9 @@ int main(int argc, char *argv[])
     glbInitExperiment("./DUNE2021/DUNE_GLoBES.glb",&glb_experiment_list[0],&glb_num_of_exps);
     glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
 
+  /* 設定輸出檔案位置 */ 
     int len = strlen("/docker_workplace/two_delta_chi2_distribution/two_delta_chi2_distribution_angle") 
-              + strlen(argv[1]) + strlen("_part") + strlen(argv[4]) + strlen(".dat") + 1;
+                            + strlen(argv[1]) + strlen("_part") + strlen(argv[4]) + strlen(".dat") + 1;
     char path[len];
     strcpy(path,"/docker_workplace/two_delta_chi2_distribution/two_delta_chi2_distribution_angle");
     strcat(path, argv[1]);
@@ -637,15 +720,14 @@ int main(int argc, char *argv[])
     strcat(path, argv[4]);
     strcat(path, ".dat");
 
-    FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
-    // FILE* OUT =  fopen(path,"w");//建立輸出檔案
+    //FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
+    FILE* OUT =  fopen(path,"w");//建立輸出檔案
+
 double angle = atof(argv[1]);
-
-
 int TOTALsample = atof(argv[2]);
 double q0, q1;
 // fprintf(OUT," CPV 90度 \n");
-// fprintf(OUT," delta_x_0 x_cpc_0 x_cpv_0 delta_x_1 x_cpc_1 x_cpv_1 \n");
+//fprintf(OUT," delta_x_0 x_cpc_0 x_cpv_0 delta_x_1 x_cpc_1 x_cpv_1 \n");
   for (int count = 0; count < TOTALsample; count++)
   { // printf("%d \n",count); //看進度
   // for(double angle = 0; angle <= 90; angle = angle +1){
