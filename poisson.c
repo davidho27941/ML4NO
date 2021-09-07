@@ -54,7 +54,7 @@ double min(int n, ...)
 /***************************************************************************
  *                            M A I N   P R O G R A M                      *
  ***************************************************************************/
-   
+
   /* 定義global fit參數(Normal Ordering, NuFIT 5.0, 2020) */
     double theta12_N = 33.44; 
     double theta13_N = 8.57;
@@ -62,11 +62,11 @@ double min(int n, ...)
     double sdm_N = 7.42;
     double ldm_N = 2.514;
   /* 3 sigma range (Normal Ordering, NuFIT 5.0, 2020) */
-    double delta_12_N =(35.86-31.27);
-    double delta_13_N =( 8.97- 8.20);
-    double delta_23_N =(51.80-39.60);
-    double delta_sdm_N=( 8.04- 6.82);
-    double delta_ldm_N=(2.598-2.431);
+    // double delta_12_N =(35.86-31.27);
+    // double delta_13_N =( 8.97- 8.20);
+    // double delta_23_N =(51.80-39.60);
+    // double delta_sdm_N=( 8.04- 6.82);
+    // double delta_ldm_N=(2.598-2.431);
 
   /* 定義global fit參數(Inverse Ordering, NuFIT 5.0, 2020) */
     double theta12_I = 33.45; 
@@ -75,11 +75,11 @@ double min(int n, ...)
     double sdm_I = 7.42;
     double ldm_I = -2.497;
   /* 3 sigma range (Inverse Ordering, NuFIT 5.0, 2020) */
-    double delta_12_I =(35.87-31.27);
-    double delta_13_I =( 8.98- 8.24);
-    double delta_23_I =(52.00-39.90);
-    double delta_sdm_I=( 8.04- 6.82);
-    double delta_ldm_I=(2.583-2.412);
+    // double delta_12_I =(35.87-31.27);
+    // double delta_13_I =( 8.98- 8.24);
+    // double delta_23_I =(52.00-39.90);
+    // double delta_sdm_I=( 8.04- 6.82);
+    // double delta_ldm_I=(2.583-2.412);
 //
 
  /* 定義3 sigma range 的Prior (For NO) */
@@ -234,9 +234,9 @@ int random_poisson(double mu)
 /* 定義Poisson Likelihood Function */
 inline double poisson_likelihood(double true_rate, double fit_rate)
 {
-    double res ;
-    if (true_rate==0) true_rate=true_rate+0.001;
-    if (fit_rate==0) fit_rate=fit_rate+0.001;
+    double res = 0 ;
+    if (true_rate==0) true_rate=true_rate+1e-9;
+    if (fit_rate==0) fit_rate=fit_rate+1e-9;
     res = fit_rate - true_rate;
     if (fit_rate <= 0.0)
         { 
@@ -247,6 +247,7 @@ inline double poisson_likelihood(double true_rate, double fit_rate)
         res += true_rate * log(true_rate/fit_rate);
         }
     return 2.0 * res;
+    //return 1;
 }
 
 /* 對True Value Spectrum 做Poisson Fluctuation */
@@ -280,48 +281,76 @@ int do_poisson_fluctuation(glb_params test_values)
     if (exp == 0){
       if (rule == 0){
         for (i=ew_low; i <= ew_high; i++) {
-        ve_dune_poisson[i] = random_poisson(ve_dune[i]);}
+        ve_dune_poisson[i] = random_poisson(ve_dune[i]);
+        //printf("%g ",ve_dune_poisson[i]);
+        }
       }
       if (rule == 1){
         for (i=ew_low; i <= ew_high; i++) {
-        vebar_dune_poisson[i] = random_poisson(vebar_dune[i]);}
+        vebar_dune_poisson[i] = random_poisson(vebar_dune[i]);
+        //printf("%g ",vebar_dune_poisson[i]);
+        }
       }
       if (rule == 2){
         for (i=ew_low; i <= ew_high; i++) {
-        vu_dune_poisson[i] = random_poisson(vu_dune[i]);}
+        vu_dune_poisson[i] = random_poisson(vu_dune[i]);
+        //printf("%g ",vu_dune_poisson[i]);
+        }
       }
       if (rule == 3){
         for (i=ew_low; i <= ew_high; i++) {
-        vubar_dune_poisson[i] = random_poisson(vubar_dune[i]);}
+        vubar_dune_poisson[i] = random_poisson(vubar_dune[i]);
+        //printf("%g ",vubar_dune_poisson[i]);
+        }
       }
     }
 
     if (exp == 1){
       if (rule == 0){
         for (i=ew_low; i <= ew_high; i++) {
-        ve_t2hk_poisson[i] = random_poisson(ve_t2hk[i]);}
+        ve_t2hk_poisson[i] = random_poisson(ve_t2hk[i]);
+        //printf("%g ",ve_t2hk_poisson[i]);
+        }
       }
       if (rule == 1){
         for (i=ew_low; i <= ew_high; i++) {
-        vu_t2hk_poisson[i] = random_poisson(vu_t2hk[i]);}
+        vu_t2hk_poisson[i] = random_poisson(vu_t2hk[i]);
+        //printf("%g ",vu_t2hk_poisson[i]);
+        }
       }
       if (rule == 2){
         for (i=ew_low; i <= ew_high; i++) {
-        vebar_t2hk_poisson[i] = random_poisson(vebar_t2hk[i]);}
+        vebar_t2hk_poisson[i] = random_poisson(vebar_t2hk[i]);
+        //printf("%g ",vebar_t2hk_poisson[i]);
+        }
       }
       if (rule == 3){
         for (i=ew_low; i <= ew_high; i++) {
-        vubar_t2hk_poisson[i] = random_poisson(vubar_t2hk[i]);}
+        vubar_t2hk_poisson[i] = random_poisson(vubar_t2hk[i]);
+        //printf("%g ",vubar_t2hk_poisson[i]);
+        }
       }
     }
       }
   } 
-  //   /* 光譜測試 */
-  // glbGetEnergyWindowBins(0, 0, &ew_low, &ew_high);
-  // for (i=ew_low; i <= ew_high; i++) {
-  //   printf("%g ",ve_dune_poisson[i]);}
-  //   printf("\n");
+  //printf("\n");
   return 0;
+}
+
+/* 光譜測試 */
+int print_spectrum(){
+  int ew_low, ew_high, j;
+  for (int exp=0; exp <= 1; exp++){
+      int rule_max= glbGetNumberOfRules(exp);
+      for (int rule = 0; rule < rule_max; rule++){
+        glbGetEnergyWindowBins(exp, rule, &ew_low, &ew_high);
+        double *true_rates = glbGetRuleRatePtr(exp, rule);
+        for (j=ew_low; j <= ew_high; j++) {
+        printf("%g ",true_rates[j]);}
+      }
+  }
+          printf("\n");
+          return 0;
 }
 
 /* 定義 Chi Square */
@@ -381,7 +410,6 @@ double chi2_poisson(int exp, int rule, int np, double *x, double *errors, void* 
         chi2 += poisson_likelihood(vubar_t2hk_poisson[i], fit_rate);}
       }
     }
- 
     return chi2;
 }
 
@@ -437,7 +465,7 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
       glbSetDensityProjectionFlag(projection_cp_fixed,GLB_FIXED,GLB_ALL);//matter density不變
 
       //GLB_FIXED/GLB_FREE                      theta12    theta13  theta23    deltacp     m21        m31
-      glbDefineProjection(projection_cp_free,  GLB_FIXED, GLB_FREE, GLB_FREE, GLB_FREE, GLB_FIXED, GLB_FREE);// theta12 m21 不動，其他可變
+      glbDefineProjection(projection_cp_free,  GLB_FIXED, GLB_FREE, GLB_FREE, GLB_FIXED, GLB_FIXED, GLB_FREE);// theta12 m21 不動，其他可變
       glbSetDensityProjectionFlag(projection_cp_free,GLB_FIXED,GLB_ALL);//matter density不變
 
    
@@ -499,8 +527,10 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
         glbSetChiFunction(GLB_ALL, GLB_ALL, GLB_OFF, "chi2_poisson", NULL);
         glbSetCentralValues(test_values_cpc_0_NO); 
         chi_0_NO = glbChiNP(test_values_cpc_0_NO, minimum ,EXP);
-        glbPrintParams(stdout,minimum); //////////
+        // glbPrintParams(stdout,minimum); //////////
         printf("chi_0_NO = %g \n",chi_0_NO);
+                                                                   //glbSetOscillationParameters(minimum);
+                                                                                      //print_spectrum() ;
 
       /* 計算Chi square under cpc_pi_NO */ 
         glbSetProjection(projection_cp_fixed); //設定Projection deltacp_Fixed
@@ -543,9 +573,14 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
       // printf("%g \n",a);
   //        
   /* 計算CPV Hypothesis (2種情況)*/      
+
+    /* 設定Prior (3 sigma range, Normal Ordering)*/
+      glbRegisterPriorFunction(prior_3sigma_NO,NULL,NULL,NULL);
+
+    /* 設定Projection (deltacp_Free)*/  
+      glbSetProjection(projection_cp_free);
+
     /* 計算Chi square under cpv_NO */ 
-      glbRegisterPriorFunction(prior_3sigma_NO,NULL,NULL,NULL); //設定Prior (3 sigma range, Normal Ordering)
-      glbSetProjection(projection_cp_free); //設定Projection deltacp_Free
       glbSetOscillationParameters(test_values_cpv_NO);
       glbSetRates();
       glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
@@ -553,12 +588,18 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
       glbSetCentralValues(test_values_cpv_NO); 
       chi_cpv_NO = glbChiNP(test_values_cpv_NO,minimum,EXP);
       // glbPrintParams(stdout,test_values_cpv_NO); //////////
-      glbPrintParams(stdout,minimum); //////////
+      // glbPrintParams(stdout,minimum); //////////
       printf("chi_cpv_NO = %g \n",chi_cpv_NO);
+                                                            //glbSetOscillationParameters(minimum);
+                                                                            //print_spectrum() ;
 
+    /* 設定Prior (3 sigma range, Inverse Ordering)*/
+      glbRegisterPriorFunction(prior_3sigma_IO,NULL,NULL,NULL);
+
+    /* 設定Projection (deltacp_Free)*/  
+      glbSetProjection(projection_cp_free);
+    
     /* 計算Chi square under cpv_IO */ 
-      glbRegisterPriorFunction(prior_3sigma_IO,NULL,NULL,NULL); //設定Prior (3 sigma range, Inverse Ordering)
-      glbSetProjection(projection_cp_free); //設定Projection deltacp_Free
       glbSetOscillationParameters(test_values_cpv_IO);
       glbSetRates();
       glbDefineChiFunction(&chi2_poisson,0,"chi2_poisson",NULL);
@@ -587,9 +628,19 @@ int main(int argc, char *argv[])
     glbInitExperiment("./DUNE2021/DUNE_GLoBES.glb",&glb_experiment_list[0],&glb_num_of_exps);
     glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
 
+    int len = strlen("/docker_workplace/two_delta_chi2_distribution/two_delta_chi2_distribution_angle") 
+              + strlen(argv[1]) + strlen("_part") + strlen(argv[4]) + strlen(".dat") + 1;
+    char path[len];
+    strcpy(path,"/docker_workplace/two_delta_chi2_distribution/two_delta_chi2_distribution_angle");
+    strcat(path, argv[1]);
+    strcat(path, "_part");
+    strcat(path, argv[4]);
+    strcat(path, ".dat");
+
     FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
+    // FILE* OUT =  fopen(path,"w");//建立輸出檔案
 double angle = atof(argv[1]);
-// printf("two_delta_chi2_distribution%s.dat" ,argv[1]);
+
 
 int TOTALsample = atof(argv[2]);
 double q0, q1;
@@ -618,6 +669,11 @@ double q0, q1;
     fprintf(OUT," \n");
   }
   
+
   return 0;  
 }
 
+// argv[1] = angle
+// argv[2] = total sample
+// argv[3] = EXP
+// argv[4] = part
