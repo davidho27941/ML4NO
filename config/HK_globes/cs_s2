@@ -1,0 +1,436 @@
+%!GLoBES
+
+$version="3.0.0"
+
+/* Copyright 2004,2005,2006,2007 The GLoBES Team
+ *
+ * If you modify this file you have to rename it.
+ *
+ * If you are using this file for producing a scientific publication
+ * or a talk please cite the following references and check the supporting
+ * files for a similar comment.
+ *
+ *
+ * The initial file was prepared by Patrick Huber and Walter Winter, hep-ex/0106019
+ *
+ *
+ * Modifications by Paul Martins and Nick Prouse:
+ *
+ *  Updated to reflect latest Hyper-K publications: arXiv:1502.05199 arXiv:1412.4673 arXiv:1109.3262
+ *
+ *  - running time for nu : 2.5 years and anti-nu : 7.5 years
+ *  - beam power : 750 kW
+ *  - fiducial volume : 560 kt
+ *  - updated matter density profile
+ *  - updated flux
+ *  - updated channels and rules to match latest official analyses
+ *  - updated cross sections for oxygen from GENIE v284
+ *  - updated systematics to reflect latest official studies
+ *  - new pre-smearing efficiencies and migration matrices
+ *
+ */
+
+/* ######################### */
+/* ####### Beam flux ####### */
+/* ######################### */
+
+Mass = 560  /* kiloton, fiducial */
+Time_nu = 2.5 /* years neutrino running at 10^7 seconds per year */
+Time_an = 7.5 /* years anti-neutrino running at 10^7 seconds per year */
+Power = 0.75   /* Mega Watt */
+
+nuflux(#JHFplus)
+    <
+    @flux_file="HK_globes/flux/sk_320_kA.glb.dat"
+    @time = Time_nu
+    @power = Power
+    @norm = (1.0/0.05)*1.0*(295.0*295.0)*8.*3.3428e31*1.0e-38*(1.0e7/(30.0*1.0e21*1.602177e-16))
+/* (1GeV/dE)*(1cm^2/A)*(L/1km)^2*(8 nucleons per O16 nucleus)*(O16 nuclei per kt water)*(1e-38)*(1MWyr/10^21POT@30GeV) */
+    >
+nuflux(#JHFminus)
+    <
+    @flux_file="HK_globes/flux/sk_m320_kA.glb.dat"
+    @time = Time_an
+    @power = Power
+    @norm = (1.0/0.05)*1.0*(295.0*295.0)*8.*3.3428e31*1.0e-38*(1.0e7/(30.0*1.0e21*1.602177e-16))
+/* (1GeV/dE)*(1cm^2/A)*(L/1km)^2*(8 nucleons per O16 nucleus)*(O16 nuclei per kt water)*(1e-38)*(1MWyr/10^21POT@30GeV) */
+    >
+    
+/* ################################ */
+/* ####### Detector settings ###### */
+/* ################################ */
+
+   $target_mass = Mass
+
+/* ############################# */
+/* ####### Energy window ####### */
+/* ############################# */
+
+$sampling_points = 100
+$sampling_min = 0.   /* GeV */
+$sampling_max = 10.    /* GeV */
+
+$emin =     0.    /* GeV */
+$emax =     10.    /* GeV */
+$binsize = {0.35,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.25,2.0,2.5,4.0}
+
+//$emin =     0.    /* GeV */
+//$emax =     10.    /* GeV */
+//$bins =     100
+
+/* ################################ */
+/* ####### Baseline settings ###### */
+/* ################################ */
+/* From M.Koide and J.Sato, "Effects of matter density fluctuation in long baseline neutrino oscillation experiments" */
+
+   $profiletype = 3
+   $densitytab  = {2.0,2.1,1.9,2.0,2.7,2.4,2.2,2.3,2.0,2.65}
+   $lengthtab   = {15,15,20,25,45,15,25,32.5,7.5,95} /* km */
+//   $densitytab  = {3.2}
+//   $lengthtab   = {295} /* km */
+
+/* ##################################### */
+/* ####### Technical information ####### */
+/* ##################################### */
+/* filter state is ignored for a density profile with more than one layer */
+
+   $filter_state = 0
+   $filter_value = 1000000
+
+/* Appearance */
+%eff_app_nue_sig_CCQE  = include "HK_globes/efficiencies/nue_sig_eff_CCQE_inFID_fiTQun.small.glb.dat"
+%eff_app_nue_sig_CC1pi = include "HK_globes/efficiencies/nue_sig_eff_CC1pi_inFID_fiTQun.small.glb.dat"
+%eff_app_nue_CCQE      = include "HK_globes/efficiencies/nue_eff_CCQE_inFID_fiTQun.small.glb.dat"
+%eff_app_nue_CC1pi     = include "HK_globes/efficiencies/nue_eff_CC1pi_inFID_fiTQun.small.glb.dat"
+//%eff_app_nue_NC        = include "HK_globes/efficiencies/nue_eff_NC_inFID_fiTQun.small.glb.dat"
+%eff_app_nuebar_CCQE   = include "HK_globes/efficiencies/nuebar_eff_CCQE_inFID_fiTQun.small.glb.dat"
+%eff_app_nuebar_CC1pi  = include "HK_globes/efficiencies/nuebar_eff_CC1pi_inFID_fiTQun.small.glb.dat"
+//%eff_app_nuebar_NC     = include "HK_globes/efficiencies/nuebar_eff_NC_inFID_fiTQun.small.glb.dat"
+%eff_app_numu_CCQE     = include "HK_globes/efficiencies/numu_eff_CCQE_inFID_fiTQun.small.glb.dat"
+%eff_app_numu_CC1pi    = include "HK_globes/efficiencies/numu_eff_CC1pi_inFID_fiTQun.small.glb.dat"
+%eff_app_numu_NC       = include "HK_globes/efficiencies/numu_eff_NC_inFID_fiTQun.small.glb.dat"
+//%eff_app_numubar_CCQE  = include "HK_globes/efficiencies/numubar_eff_CCQE_inFID_fiTQun.small.glb.dat"
+//%eff_app_numubar_CC1pi = include "HK_globes/efficiencies/numubar_eff_CC1pi_inFID_fiTQun.small.glb.dat"
+%eff_app_numubar_NC    = include "HK_globes/efficiencies/numubar_eff_NC_inFID_fiTQun.small.glb.dat"
+
+/* Disappearance */
+//%eff_dis_nue_sig_CCQE    = include "HK_globes/efficiencies/nue_sig_eff_CCQE_inFID_dis_new.small.glb.dat"
+//%eff_dis_nue_sig_CC1pi   = include "HK_globes/efficiencies/nue_sig_eff_CC1pi_inFID_dis_new.small.glb.dat"
+//%eff_dis_nue_sig_CCother = include "HK_globes/efficiencies/nue_sig_eff_CCother_inFID_dis_new.small.glb.dat"
+//%eff_dis_nue_CCQE        = include "HK_globes/efficiencies/nue_eff_CCQE_inFID_dis_new.small.glb.dat"
+//%eff_dis_nue_CC1pi       = include "HK_globes/efficiencies/nue_eff_CC1pi_inFID_dis_new.small.glb.dat"
+//%eff_dis_nue_CCother     = include "HK_globes/efficiencies/nue_eff_CCother_inFID_dis_new.small.glb.dat"
+//%eff_dis_nue_NC          = include "HK_globes/efficiencies/nue_eff_NC_inFID_dis_new.small.glb.dat"
+//%eff_dis_nuebar_CCQE     = include "HK_globes/efficiencies/nuebar_eff_CCQE_inFID_dis_new.small.glb.dat"
+//%eff_dis_nuebar_CC1pi    = include "HK_globes/efficiencies/nuebar_eff_CC1pi_inFID_dis_new.small.glb.dat"
+//%eff_dis_nuebar_CCother  = include "HK_globes/efficiencies/nuebar_eff_CCother_inFID_dis_new.small.glb.dat"
+//%eff_dis_nuebar_NC       = include "HK_globes/efficiencies/nuebar_eff_NC_inFID_dis_new.small.glb.dat"
+%eff_dis_numu_CCQE       = include "HK_globes/efficiencies/numu_eff_CCQE_inFID_dis_new.small.glb.dat"
+%eff_dis_numu_CC1pi      = include "HK_globes/efficiencies/numu_eff_CC1pi_inFID_dis_new.small.glb.dat"
+%eff_dis_numu_CCother    = include "HK_globes/efficiencies/numu_eff_CC1pi_inFID_dis_new.small.glb.dat"
+%eff_dis_numu_NC         = include "HK_globes/efficiencies/numu_eff_NC_inFID_dis_new.small.glb.dat"
+%eff_dis_numubar_CCQE    = include "HK_globes/efficiencies/numubar_eff_CCQE_inFID_dis_new.small.glb.dat"
+%eff_dis_numubar_CC1pi   = include "HK_globes/efficiencies/numubar_eff_CC1pi_inFID_dis_new.small.glb.dat"
+%eff_dis_numubar_CCother = include "HK_globes/efficiencies/numubar_eff_CCother_inFID_dis_new.small.glb.dat"
+%eff_dis_numubar_NC      = include "HK_globes/efficiencies/numubar_eff_NC_inFID_dis_new.small.glb.dat"
+
+
+/* ################################# */
+/* ####### Energy resolution ####### */
+/* ################################# */
+
+/* Appearance */
+energy(#res_nu_app_nue_sig_CCQE)  < @energy = include "HK_globes/energy_smearing/NU_nue_sig_res_CCQE_fiTQun.small.glb.dat"  >
+energy(#res_nu_app_nue_sig_CC1pi) < @energy = include "HK_globes/energy_smearing/NU_nue_sig_res_CC1pi_fiTQun.small.glb.dat" >
+energy(#res_nu_app_nue_CCQE)      < @energy = include "HK_globes/energy_smearing/NU_nue_res_CCQE_fiTQun.small.glb.dat"      >
+energy(#res_nu_app_nue_CC1pi)     < @energy = include "HK_globes/energy_smearing/NU_nue_res_CC1pi_fiTQun.small.glb.dat"     >
+//energy(#res_nu_app_nue_NC)        < @energy = include "HK_globes/energy_smearing/NU_nue_res_NC_fiTQun.small.glb.dat"        >
+//energy(#res_nu_app_nuebar_CCQE)   < @energy = include "HK_globes/energy_smearing/NU_nuebar_res_CCQE_fiTQun.small.glb.dat"   >
+//energy(#res_nu_app_nuebar_CC1pi)  < @energy = include "HK_globes/energy_smearing/NU_nuebar_res_CC1pi_fiTQun.small.glb.dat"  >
+//energy(#res_nu_app_nuebar_NC)     < @energy = include "HK_globes/energy_smearing/NU_nuebar_res_NC_fiTQun.small.glb.dat"     >
+//energy(#res_nu_app_numu_CCQE)     < @energy = include "HK_globes/energy_smearing/NU_numu_res_CCQE_fiTQun.small.glb.dat"     >
+//energy(#res_nu_app_numu_CC1pi)    < @energy = include "HK_globes/energy_smearing/NU_numu_res_CC1pi_fiTQun.small.glb.dat"    >
+energy(#res_nu_app_numu_NC)       < @energy = include "HK_globes/energy_smearing/NU_numu_res_NC_fiTQun.small.glb.dat"       >
+//energy(#res_nu_app_numubar_CCQE)  < @energy = include "HK_globes/energy_smearing/NU_numubar_res_CCQE_fiTQun.small.glb.dat"  >
+//energy(#res_nu_app_numubar_CC1pi) < @energy = include "HK_globes/energy_smearing/NU_numubar_res_CC1pi_fiTQun.small.glb.dat" >
+//energy(#res_nu_app_numubar_NC)    < @energy = include "HK_globes/energy_smearing/NU_numubar_res_NC_fiTQun.small.glb.dat"    >
+
+/* Disappearance */
+//energy(#res_nu_dis_nue_sig_CCQE)    < @energy = include "HK_globes/energy_smearing/NU_nue_sig_res_CCQE_dis_new.small.glb.dat"    >
+//energy(#res_nu_dis_nue_sig_CC1pi)   < @energy = include "HK_globes/energy_smearing/NU_nue_sig_res_CC1pi_dis_new.small.glb.dat"   >
+//energy(#res_nu_dis_nue_sig_CCother) < @energy = include "HK_globes/energy_smearing/NU_nue_sig_res_CCother_dis_new.small.glb.dat" >
+//energy(#res_nu_dis_nue_sig_NC)      < @energy = include "HK_globes/energy_smearing/NU_nue_sig_res_NC_dis_new.small.glb.dat"      >
+//energy(#res_nu_dis_nue_CCQE)        < @energy = include "HK_globes/energy_smearing/NU_nue_res_CCQE_dis_new.small.glb.dat"        >
+//energy(#res_nu_dis_nue_CC1pi)       < @energy = include "HK_globes/energy_smearing/NU_nue_res_CC1pi_dis_new.small.glb.dat"       >
+//energy(#res_nu_dis_nue_CCother)     < @energy = include "HK_globes/energy_smearing/NU_nue_res_CCother_dis_new.small.glb.dat"     >
+//energy(#res_nu_dis_nue_NC)          < @energy = include "HK_globes/energy_smearing/NU_nue_res_NC_dis_new.small.glb.dat"          >
+//energy(#res_nu_dis_nuebar_CCQE)     < @energy = include "HK_globes/energy_smearing/NU_nuebar_res_CCQE_dis_new.small.glb.dat"     >
+//energy(#res_nu_dis_nuebar_CC1pi)    < @energy = include "HK_globes/energy_smearing/NU_nuebar_res_CC1pi_dis_new.small.glb.dat"    >
+//energy(#res_nu_dis_nuebar_CCother)  < @energy = include "HK_globes/energy_smearing/NU_nuebar_res_CCother_dis_new.small.glb.dat"  >
+//energy(#res_nu_dis_nuebar_NC)       < @energy = include "HK_globes/energy_smearing/NU_nuebar_res_NC_dis_new.small.glb.dat"       >
+energy(#res_nu_dis_numu_CCQE)       < @energy = include "HK_globes/energy_smearing/NU_numu_res_CCQE_dis_new.small.glb.dat"       >
+energy(#res_nu_dis_numu_CC1pi)      < @energy = include "HK_globes/energy_smearing/NU_numu_res_CC1pi_dis_new.small.glb.dat"      >
+energy(#res_nu_dis_numu_CCother)    < @energy = include "HK_globes/energy_smearing/NU_numu_res_CCother_dis_new.small.glb.dat"    >
+energy(#res_nu_dis_numu_NC)         < @energy = include "HK_globes/energy_smearing/NU_numu_res_NC_dis_new.small.glb.dat"         >
+energy(#res_nu_dis_numubar_CCQE)    < @energy = include "HK_globes/energy_smearing/NU_numubar_res_CCQE_dis_new.small.glb.dat"    >
+energy(#res_nu_dis_numubar_CC1pi)   < @energy = include "HK_globes/energy_smearing/NU_numubar_res_CC1pi_dis_new.small.glb.dat"   >
+energy(#res_nu_dis_numubar_CCother) < @energy = include "HK_globes/energy_smearing/NU_numubar_res_CCother_dis_new.small.glb.dat" >
+//energy(#res_nu_dis_numubar_NC)      < @energy = include "HK_globes/energy_smearing/NU_numubar_res_NC_dis_new.small.glb.dat"      >
+
+/* Appearance */
+energy(#res_anu_app_nue_sig_CCQE)  < @energy = include "HK_globes/energy_smearing/AN_nue_sig_res_CCQE_fiTQun.small.glb.dat"  >
+energy(#res_anu_app_nue_sig_CC1pi) < @energy = include "HK_globes/energy_smearing/AN_nue_sig_res_CC1pi_fiTQun.small.glb.dat" >
+energy(#res_anu_app_nue_CCQE)      < @energy = include "HK_globes/energy_smearing/AN_nue_res_CCQE_fiTQun.small.glb.dat"      >
+energy(#res_anu_app_nue_CC1pi)     < @energy = include "HK_globes/energy_smearing/AN_nue_res_CC1pi_fiTQun.small.glb.dat"     >
+//energy(#res_anu_app_nue_NC)        < @energy = include "HK_globes/energy_smearing/AN_nue_res_NC_fiTQun.small.glb.dat"        >
+energy(#res_anu_app_nuebar_CCQE)   < @energy = include "HK_globes/energy_smearing/AN_nuebar_res_CCQE_fiTQun.small.glb.dat"   >
+energy(#res_anu_app_nuebar_CC1pi)  < @energy = include "HK_globes/energy_smearing/AN_nuebar_res_CC1pi_fiTQun.small.glb.dat"  >
+//energy(#res_anu_app_nuebar_NC)     < @energy = include "HK_globes/energy_smearing/AN_nuebar_res_NC_fiTQun.small.glb.dat"     >
+//energy(#res_anu_app_numu_CCQE)     < @energy = include "HK_globes/energy_smearing/AN_numu_res_CCQE_fiTQun.small.glb.dat"     >
+//energy(#res_anu_app_numu_CC1pi)    < @energy = include "HK_globes/energy_smearing/AN_numu_res_CC1pi_fiTQun.small.glb.dat"    >
+energy(#res_anu_app_numu_NC)       < @energy = include "HK_globes/energy_smearing/AN_numu_res_NC_fiTQun.small.glb.dat"       >
+//energy(#res_anu_app_numubar_CCQE)  < @energy = include "HK_globes/energy_smearing/AN_numubar_res_CCQE_fiTQun.small.glb.dat"  >
+//energy(#res_anu_app_numubar_CC1pi) < @energy = include "HK_globes/energy_smearing/AN_numubar_res_CC1pi_fiTQun.small.glb.dat" >
+energy(#res_anu_app_numubar_NC)    < @energy = include "HK_globes/energy_smearing/AN_numubar_res_NC_fiTQun.small.glb.dat"    >
+
+/* Disappearance */
+//energy(#res_anu_dis_nue_sig_CCQE)    < @energy = include "HK_globes/energy_smearing/AN_nue_sig_res_CCQE_dis_new.small.glb.dat"    >
+//energy(#res_anu_dis_nue_sig_CC1pi)   < @energy = include "HK_globes/energy_smearing/AN_nue_sig_res_CC1pi_dis_new.small.glb.dat"   >
+//energy(#res_anu_dis_nue_sig_CCother) < @energy = include "HK_globes/energy_smearing/AN_nue_sig_res_CCother_dis_new.small.glb.dat" >
+//energy(#res_anu_dis_nue_sig_NC)      < @energy = include "HK_globes/energy_smearing/AN_nue_sig_res_NC_dis_new.small.glb.dat"      >
+//energy(#res_anu_dis_nue_CCQE)        < @energy = include "HK_globes/energy_smearing/AN_nue_res_CCQE_dis_new.small.glb.dat"        >
+//energy(#res_anu_dis_nue_CC1pi)       < @energy = include "HK_globes/energy_smearing/AN_nue_res_CC1pi_dis_new.small.glb.dat"       >
+//energy(#res_anu_dis_nue_CCother)     < @energy = include "HK_globes/energy_smearing/AN_nue_res_CCother_dis_new.small.glb.dat"     >
+//energy(#res_anu_dis_nue_NC)          < @energy = include "HK_globes/energy_smearing/AN_nue_res_NC_dis_new.small.glb.dat"          >
+//energy(#res_anu_dis_nuebar_CCQE)     < @energy = include "HK_globes/energy_smearing/AN_nuebar_res_CCQE_dis_new.small.glb.dat"     >
+//energy(#res_anu_dis_nuebar_CC1pi)    < @energy = include "HK_globes/energy_smearing/AN_nuebar_res_CC1pi_dis_new.small.glb.dat"    >
+//energy(#res_anu_dis_nuebar_CCother)  < @energy = include "HK_globes/energy_smearing/AN_nuebar_res_CCother_dis_new.small.glb.dat"  >
+//energy(#res_anu_dis_nuebar_NC)       < @energy = include "HK_globes/energy_smearing/AN_nuebar_res_NC_dis_new.small.glb.dat"       >
+energy(#res_anu_dis_numu_CCQE)       < @energy = include "HK_globes/energy_smearing/AN_numu_res_CCQE_dis_new.small.glb.dat"       >
+energy(#res_anu_dis_numu_CC1pi)      < @energy = include "HK_globes/energy_smearing/AN_numu_res_CC1pi_dis_new.small.glb.dat"      >
+energy(#res_anu_dis_numu_CCother)    < @energy = include "HK_globes/energy_smearing/AN_numu_res_CCother_dis_new.small.glb.dat"    >
+energy(#res_anu_dis_numu_NC)         < @energy = include "HK_globes/energy_smearing/AN_numu_res_NC_dis_new.small.glb.dat"         >
+energy(#res_anu_dis_numubar_CCQE)    < @energy = include "HK_globes/energy_smearing/AN_numubar_res_CCQE_dis_new.small.glb.dat"    >
+energy(#res_anu_dis_numubar_CC1pi)   < @energy = include "HK_globes/energy_smearing/AN_numubar_res_CC1pi_dis_new.small.glb.dat"   >
+energy(#res_anu_dis_numubar_CCother) < @energy = include "HK_globes/energy_smearing/AN_numubar_res_CCother_dis_new.small.glb.dat" >
+energy(#res_anu_dis_numubar_NC)      < @energy = include "HK_globes/energy_smearing/AN_numubar_res_NC_dis_new.small.glb.dat"      >
+
+/* ############################## */
+/* ####### Cross sections ####### */
+/* ############################## */
+/* From GENIE v284 for water   */
+
+cross(#CCQE)    < @cross_file="HK_globes/xsec/CCQE.dat"    >
+cross(#CC1pi)   < @cross_file="HK_globes/xsec/CC1pi.dat"   >
+cross(#CCother) < @cross_file="HK_globes/xsec/CCOther.dat" >
+cross(#NC)      < @cross_file="HK_globes/xsec/NC.dat"      >
+//cross(#CCQE)    < @cross_file="HK_globes/xsec/H2Occqexsec.glb.dat"    >
+//cross(#CC1pi)   < @cross_file="HK_globes/xsec/H2Occ1pixsec.glb.dat"   >
+//cross(#CCother) < @cross_file="HK_globes/xsec/H2Occotherxsec.glb.dat" >
+//cross(#NC)      < @cross_file="HK_globes/xsec/H2Omostncxsec.glb.dat"      >
+
+/* ################################### */
+/* ####### Channel definitions ####### */
+/* ################################### */
+
+/***************** Appearance *****************/
+channel(#NU_app_nue_sig_CCQE)     <@channel = #JHFplus: +: m:      e:    #CCQE:  #res_nu_app_nue_sig_CCQE  @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CCQE)>
+channel(#NU_app_nue_sig_CC1pi)    <@channel = #JHFplus: +: m:      e:    #CC1pi: #res_nu_app_nue_sig_CC1pi @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CC1pi)>
+//channel(#NU_app_nuebar_sig_CCQE)  <@channel = #JHFplus: -: m:      e:    #CCQE:  #res_nu_app_nue_sig_CCQE  @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CCQE)>
+//channel(#NU_app_nuebar_sig_CC1pi) <@channel = #JHFplus: -: m:      e:    #CC1pi: #res_nu_app_nue_sig_CC1pi @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CC1pi)>
+channel(#NU_app_nue_CCQE)         <@channel = #JHFplus: +: e:      e:    #CCQE:  #res_nu_app_nue_CCQE      @pre_smearing_efficiencies=copy(%eff_app_nue_CCQE)>
+channel(#NU_app_nue_CC1pi)        <@channel = #JHFplus: +: e:      e:    #CC1pi: #res_nu_app_nue_CC1pi     @pre_smearing_efficiencies=copy(%eff_app_nue_CC1pi)>
+//channel(#NU_app_nue_NC)           <@channel = #JHFplus: +: NOSC_e: e:    #NC:    #res_nu_app_nue_NC        @pre_smearing_efficiencies=copy(%eff_app_nue_NC)>
+//channel(#NU_app_nuebar_CCQE)      <@channel = #JHFplus: -: e:      e:    #CCQE:  #res_nu_app_nuebar_CCQE   @pre_smearing_efficiencies=copy(%eff_app_nuebar_CCQE)>
+//channel(#NU_app_nuebar_CC1pi)     <@channel = #JHFplus: -: e:      e:    #CC1pi: #res_nu_app_nuebar_CC1pi  @pre_smearing_efficiencies=copy(%eff_app_nuebar_CC1pi)>
+//channel(#NU_app_nuebar_NC)        <@channel = #JHFplus: -: NOSC_e: e:    #NC:    #res_nu_app_nuebar_NC     @pre_smearing_efficiencies=copy(%eff_app_nuebar_NC)>
+//channel(#NU_app_numu_CCQE)        <@channel = #JHFplus: +: m:      m:    #CCQE:  #res_nu_app_numu_CCQE     @pre_smearing_efficiencies=copy(%eff_app_numu_CCQE)>
+//channel(#NU_app_numu_CC1pi)       <@channel = #JHFplus: +: m:      m:    #CC1pi: #res_nu_app_numu_CC1pi    @pre_smearing_efficiencies=copy(%eff_app_numu_CC1pi)>
+channel(#NU_app_numu_NC)          <@channel = #JHFplus: +: NOSC_m: m:    #NC:    #res_nu_app_numu_NC       @pre_smearing_efficiencies=copy(%eff_app_numu_NC)>
+//channel(#NU_app_numubar_CCQE)     <@channel = #JHFplus: -: m:      m:    #CCQE:  #res_nu_app_numubar_CCQE  @pre_smearing_efficiencies=copy(%eff_app_numubar_CCQE)>
+//channel(#NU_app_numubar_CC1pi)    <@channel = #JHFplus: -: m:      m:    #CC1pi: #res_nu_app_numubar_CC1pi @pre_smearing_efficiencies=copy(%eff_app_numubar_CC1pi)>
+//channel(#NU_app_numubar_NC)       <@channel = #JHFplus: -: NOSC_m: m:    #NC:    #res_nu_app_numubar_NC    @pre_smearing_efficiencies=copy(%eff_app_numubar_NC)>
+
+/************* disappearance *************/
+//channel(#NU_dis_nue_sig_CCQE)       < @channel = #JHFplus: +: m:      e: #CCQE:    #res_nu_dis_nue_sig_CCQE    @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCQE)>
+//channel(#NU_dis_nue_sig_CC1pi)      < @channel = #JHFplus: +: m:      e: #CC1pi:   #res_nu_dis_nue_sig_CC1pi   @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CC1pi)>
+//channel(#NU_dis_nue_sig_CCother)    < @channel = #JHFplus: +: m:      e: #CCother: #res_nu_dis_nue_sig_CCother @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCother)>
+//channel(#NU_dis_nuebar_sig_CCQE)    < @channel = #JHFplus: -: m:      e: #CCQE:    #res_nu_dis_nue_sig_CCQE    @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCQE)>
+//channel(#NU_dis_nuebar_sig_CC1pi)   < @channel = #JHFplus: -: m:      e: #CC1pi:   #res_nu_dis_nue_sig_CC1pi   @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CC1pi)>
+//channel(#NU_dis_nuebar_sig_CCother) < @channel = #JHFplus: -: m:      e: #CCother: #res_nu_dis_nue_sig_CCother @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCother)>
+//channel(#NU_dis_nue_CCQE)           < @channel = #JHFplus: +: e:      e: #CCQE:    #res_nu_dis_nue_CCQE        @pre_smearing_efficiencies=copy(%eff_dis_nue_CCQE)>
+//channel(#NU_dis_nue_CC1pi)          < @channel = #JHFplus: +: e:      e: #CC1pi:   #res_nu_dis_nue_CC1pi       @pre_smearing_efficiencies=copy(%eff_dis_nue_CC1pi)>
+//channel(#NU_dis_nue_CCother)        < @channel = #JHFplus: +: e:      e: #CCother: #res_nu_dis_nue_CCother     @pre_smearing_efficiencies=copy(%eff_dis_nue_CCother)>
+//channel(#NU_dis_nue_NC)             < @channel = #JHFplus: +: NOSC_e: e: #NC:      #res_nu_dis_nue_NC          @pre_smearing_efficiencies=copy(%eff_dis_nue_NC)>
+//channel(#NU_dis_nuebar_CCQE)        < @channel = #JHFplus: -: e:      e: #CCQE:    #res_nu_dis_nuebar_CCQE     @pre_smearing_efficiencies=copy(%eff_dis_nuebar_CCQE)>
+//channel(#NU_dis_nuebar_CC1pi)       < @channel = #JHFplus: -: e:      e: #CC1pi:   #res_nu_dis_nuebar_CC1pi    @pre_smearing_efficiencies=copy(%eff_dis_nuebar_CC1pi)>
+//channel(#NU_dis_nuebar_CCother)     < @channel = #JHFplus: -: e:      e: #CCother: #res_nu_dis_nuebar_CCother  @pre_smearing_efficiencies=copy(%eff_dis_nuebar_CCother)>
+//channel(#NU_dis_nuebar_NC)          < @channel = #JHFplus: -: NOSC_e: e: #NC:      #res_nu_dis_nuebar_NC       @pre_smearing_efficiencies=copy(%eff_dis_nuebar_NC)>
+channel(#NU_dis_numu_CCQE)          < @channel = #JHFplus: +: m:      m: #CCQE:    #res_nu_dis_numu_CCQE       @pre_smearing_efficiencies=copy(%eff_dis_numu_CCQE)>
+channel(#NU_dis_numu_CC1pi)         < @channel = #JHFplus: +: m:      m: #CC1pi:   #res_nu_dis_numu_CC1pi      @pre_smearing_efficiencies=copy(%eff_dis_numu_CC1pi)>
+channel(#NU_dis_numu_CCother)       < @channel = #JHFplus: +: m:      m: #CCother: #res_nu_dis_numu_CCother    @pre_smearing_efficiencies=copy(%eff_dis_numu_CCother)>
+channel(#NU_dis_numu_NC)            < @channel = #JHFplus: +: NOSC_m: m: #NC:      #res_nu_dis_numu_NC         @pre_smearing_efficiencies=copy(%eff_dis_numu_NC)>
+channel(#NU_dis_numubar_CCQE)       < @channel = #JHFplus: -: m:      m: #CCQE:    #res_nu_dis_numubar_CCQE    @pre_smearing_efficiencies=copy(%eff_dis_numubar_CCQE)>
+channel(#NU_dis_numubar_CC1pi)      < @channel = #JHFplus: -: m:      m: #CC1pi:   #res_nu_dis_numubar_CC1pi   @pre_smearing_efficiencies=copy(%eff_dis_numubar_CC1pi)>
+channel(#NU_dis_numubar_CCother)    < @channel = #JHFplus: -: m:      m: #CCother: #res_nu_dis_numubar_CCother @pre_smearing_efficiencies=copy(%eff_dis_numubar_CCother)>
+//channel(#NU_dis_numubar_NC)         < @channel = #JHFplus: -: NOSC_m: m: #NC:      #res_nu_dis_numubar_NC      @pre_smearing_efficiencies=copy(%eff_dis_numubar_NC)>
+
+/***************** Appearance *****************/
+channel(#AN_app_nue_sig_CCQE)     <@channel = #JHFminus: +: m:      e:    #CCQE:  #res_anu_app_nue_sig_CCQE  @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CCQE)>
+channel(#AN_app_nue_sig_CC1pi)    <@channel = #JHFminus: +: m:      e:    #CC1pi: #res_anu_app_nue_sig_CC1pi @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CC1pi)>
+channel(#AN_app_nuebar_sig_CCQE)  <@channel = #JHFminus: -: m:      e:    #CCQE:  #res_anu_app_nue_sig_CCQE  @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CCQE)>
+channel(#AN_app_nuebar_sig_CC1pi) <@channel = #JHFminus: -: m:      e:    #CC1pi: #res_anu_app_nue_sig_CC1pi @pre_smearing_efficiencies=copy(%eff_app_nue_sig_CC1pi)>
+channel(#AN_app_nue_CCQE)         <@channel = #JHFminus: +: e:      e:    #CCQE:  #res_anu_app_nue_CCQE      @pre_smearing_efficiencies=copy(%eff_app_nue_CCQE)>
+channel(#AN_app_nue_CC1pi)        <@channel = #JHFminus: +: e:      e:    #CC1pi: #res_anu_app_nue_CC1pi     @pre_smearing_efficiencies=copy(%eff_app_nue_CC1pi)>
+//channel(#AN_app_nue_NC)           <@channel = #JHFminus: +: NOSC_e: e:    #NC:    #res_anu_app_nue_NC        @pre_smearing_efficiencies=copy(%eff_app_nue_NC)>
+channel(#AN_app_nuebar_CCQE)      <@channel = #JHFminus: -: e:      e:    #CCQE:  #res_anu_app_nuebar_CCQE   @pre_smearing_efficiencies=copy(%eff_app_nuebar_CCQE)>
+channel(#AN_app_nuebar_CC1pi)     <@channel = #JHFminus: -: e:      e:    #CC1pi: #res_anu_app_nuebar_CC1pi  @pre_smearing_efficiencies=copy(%eff_app_nuebar_CC1pi)>
+//channel(#AN_app_nuebar_NC)        <@channel = #JHFminus: -: NOSC_e: e:    #NC:    #res_anu_app_nuebar_NC     @pre_smearing_efficiencies=copy(%eff_app_nuebar_NC)>
+//channel(#AN_app_numu_CCQE)        <@channel = #JHFminus: +: m:      m:    #CCQE:  #res_anu_app_numu_CCQE     @pre_smearing_efficiencies=copy(%eff_app_numu_CCQE)>
+//channel(#AN_app_numu_CC1pi)       <@channel = #JHFminus: +: m:      m:    #CC1pi: #res_anu_app_numu_CC1pi    @pre_smearing_efficiencies=copy(%eff_app_numu_CC1pi)>
+channel(#AN_app_numu_NC)          <@channel = #JHFminus: +: NOSC_m: m:    #NC:    #res_anu_app_numu_NC       @pre_smearing_efficiencies=copy(%eff_app_numu_NC)>
+//channel(#AN_app_numubar_CCQE)     <@channel = #JHFminus: -: m:      m:    #CCQE:  #res_anu_app_numubar_CCQE  @pre_smearing_efficiencies=copy(%eff_app_numubar_CCQE)>
+//channel(#AN_app_numubar_CC1pi)    <@channel = #JHFminus: -: m:      m:    #CC1pi: #res_anu_app_numubar_CC1pi @pre_smearing_efficiencies=copy(%eff_app_numubar_CC1pi)>
+channel(#AN_app_numubar_NC)       <@channel = #JHFminus: -: NOSC_m: m:    #NC:    #res_anu_app_numubar_NC    @pre_smearing_efficiencies=copy(%eff_app_numubar_NC)>
+
+/************* disappearance *************/
+//channel(#AN_dis_nue_sig_CCQE)       < @channel = #JHFminus: +: m:      e: #CCQE:    #res_anu_dis_nue_sig_CCQE    @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCQE)>
+//channel(#AN_dis_nue_sig_CC1pi)      < @channel = #JHFminus: +: m:      e: #CC1pi:   #res_anu_dis_nue_sig_CC1pi   @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CC1pi)>
+//channel(#AN_dis_nue_sig_CCother)    < @channel = #JHFminus: +: m:      e: #CCother: #res_anu_dis_nue_sig_CCother @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCother)>
+//channel(#AN_dis_nuebar_sig_CCQE)    < @channel = #JHFminus: -: m:      e: #CCQE:    #res_anu_dis_nue_sig_CCQE    @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCQE)>
+//channel(#AN_dis_nuebar_sig_CC1pi)   < @channel = #JHFminus: -: m:      e: #CC1pi:   #res_anu_dis_nue_sig_CC1pi   @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CC1pi)>
+//channel(#AN_dis_nuebar_sig_CCother) < @channel = #JHFminus: -: m:      e: #CCother: #res_anu_dis_nue_sig_CCother @pre_smearing_efficiencies=copy(%eff_dis_nue_sig_CCother)>
+//channel(#AN_dis_nue_CCQE)           < @channel = #JHFminus: +: e:      e: #CCQE:    #res_anu_dis_nue_CCQE        @pre_smearing_efficiencies=copy(%eff_dis_nue_CCQE)>
+//channel(#AN_dis_nue_CC1pi)          < @channel = #JHFminus: +: e:      e: #CC1pi:   #res_anu_dis_nue_CC1pi       @pre_smearing_efficiencies=copy(%eff_dis_nue_CC1pi)>
+//channel(#AN_dis_nue_CCother)        < @channel = #JHFminus: +: e:      e: #CCother: #res_anu_dis_nue_CCother     @pre_smearing_efficiencies=copy(%eff_dis_nue_CCother)>
+//channel(#AN_dis_nue_NC)             < @channel = #JHFminus: +: NOSC_e: e: #NC:      #res_anu_dis_nue_NC          @pre_smearing_efficiencies=copy(%eff_dis_nue_NC)>
+//channel(#AN_dis_nuebar_CCQE)        < @channel = #JHFminus: -: e:      e: #CCQE:    #res_anu_dis_nuebar_CCQE     @pre_smearing_efficiencies=copy(%eff_dis_nuebar_CCQE)>
+//channel(#AN_dis_nuebar_CC1pi)       < @channel = #JHFminus: -: e:      e: #CC1pi:   #res_anu_dis_nuebar_CC1pi    @pre_smearing_efficiencies=copy(%eff_dis_nuebar_CC1pi)>
+//channel(#AN_dis_nuebar_CCother)     < @channel = #JHFminus: -: e:      e: #CCother: #res_anu_dis_nuebar_CCother  @pre_smearing_efficiencies=copy(%eff_dis_nuebar_CCother)>
+//channel(#AN_dis_nuebar_NC)          < @channel = #JHFminus: -: NOSC_e: e: #NC:      #res_anu_dis_nuebar_NC       @pre_smearing_efficiencies=copy(%eff_dis_nuebar_NC)>
+channel(#AN_dis_numu_CCQE)          < @channel = #JHFminus: +: m:      m: #CCQE:    #res_anu_dis_numu_CCQE       @pre_smearing_efficiencies=copy(%eff_dis_numu_CCQE)>
+channel(#AN_dis_numu_CC1pi)         < @channel = #JHFminus: +: m:      m: #CC1pi:   #res_anu_dis_numu_CC1pi      @pre_smearing_efficiencies=copy(%eff_dis_numu_CC1pi)>
+channel(#AN_dis_numu_CCother)       < @channel = #JHFminus: +: m:      m: #CCother: #res_anu_dis_numu_CCother    @pre_smearing_efficiencies=copy(%eff_dis_numu_CCother)>
+channel(#AN_dis_numu_NC)            < @channel = #JHFminus: +: NOSC_m: m: #NC:      #res_anu_dis_numu_NC         @pre_smearing_efficiencies=copy(%eff_dis_numu_NC)>
+channel(#AN_dis_numubar_CCQE)       < @channel = #JHFminus: -: m:      m: #CCQE:    #res_anu_dis_numubar_CCQE    @pre_smearing_efficiencies=copy(%eff_dis_numubar_CCQE)>
+channel(#AN_dis_numubar_CC1pi)      < @channel = #JHFminus: -: m:      m: #CC1pi:   #res_anu_dis_numubar_CC1pi   @pre_smearing_efficiencies=copy(%eff_dis_numubar_CC1pi)>
+channel(#AN_dis_numubar_CCother)    < @channel = #JHFminus: -: m:      m: #CCother: #res_anu_dis_numubar_CCother @pre_smearing_efficiencies=copy(%eff_dis_numubar_CCother)>
+channel(#AN_dis_numubar_NC)         < @channel = #JHFminus: -: NOSC_m: m: #NC:      #res_anu_dis_numubar_NC      @pre_smearing_efficiencies=copy(%eff_dis_numubar_NC)>
+
+/* ################################# */
+/* ####### Setting the rules ####### */
+/* ################################# */
+
+
+/* 0 */
+rule(#NU_Appearance)<
+    @signal = 1.173@#NU_app_nue_sig_CCQE :
+              1.173@#NU_app_nue_sig_CC1pi //:
+//              1.357@#NU_app_nuebar_sig_CCQE :
+//              1.357@#NU_app_nuebar_sig_CC1pi
+    @background = 1.163@#NU_app_nue_CCQE :
+                  1.163@#NU_app_nue_CC1pi :
+//                  0.471@#NU_app_nue_NC :
+//                  1.247@#NU_app_nuebar_CCQE :
+//                  1.247@#NU_app_nuebar_CC1pi :
+//                  0.471@#NU_app_nuebar_NC :
+//                  1.146@#NU_app_numu_CCQE :
+//                  1.146@#NU_app_numu_CC1pi :
+                  0.471@#NU_app_numu_NC //:
+//                  1.0@#NU_app_numubar_CCQE :
+//                  1.0@#NU_app_numubar_CC1pi :
+//                  0.471@#NU_app_numubar_NC
+    @signalerror     = 0.064 : 0.000001
+    @backgrounderror = 0.064 : 0.000001
+    @sys_on_function = "chiSpectrumTilt"
+    @sys_off_function = "chiNoSysSpectrum"
+    @energy_window = 0.0 : 1.25
+>
+
+/* 1 */
+rule(#NU_Disapperance)<
+    @signal = 0.980@#NU_dis_numu_CCQE :
+              0.980@#NU_dis_numu_CC1pi :
+              0.980@#NU_dis_numu_CCother :
+              1.267@#NU_dis_numubar_CCQE :
+              1.267@#NU_dis_numubar_CC1pi :
+              1.267@#NU_dis_numubar_CCother
+    @background = //1.176@#NU_dis_nue_sig_CCQE :
+//                  1.176@#NU_dis_nue_sig_CC1pi :
+//                  1.176@#NU_dis_nue_sig_CCother :
+//                  1.0@#NU_dis_nuebar_sig_CCQE :
+//                  1.0@#NU_dis_nuebar_sig_CC1pi :
+//                  1.0@#NU_dis_nuebar_sig_CCother :
+//                  1.0@#NU_dis_nue_CCQE :
+//                  1.0@#NU_dis_nue_CC1pi :
+//                  1.0@#NU_dis_nue_CCother :
+//                  0.567@#NU_dis_nue_NC :
+//                  1.0@#NU_dis_nuebar_CCQE :
+//                  1.0@#NU_dis_nuebar_CC1pi :
+//                  1.0@#NU_dis_nuebar_CCother :
+//                  0.567@#NU_dis_nuebar_NC :
+                  0.567@#NU_dis_numu_NC //:
+//                  0.567@#NU_dis_numubar_NC
+    @signalerror     = 0.072 : 0.000001
+    @backgrounderror = 0.072 : 0.000001
+    @sys_on_function = "chiSpectrumTilt"
+    @sys_off_function = "chiNoSysSpectrum"
+    @energy_window = 0.0 : 10.0
+>
+
+/* 2 */
+rule(#AN_Appearance)<
+    @signal = 1.190@#AN_app_nue_sig_CCQE :
+              1.190@#AN_app_nue_sig_CC1pi :
+              1.378@#AN_app_nuebar_sig_CCQE :
+              1.378@#AN_app_nuebar_sig_CC1pi
+    @background = 1.170@#AN_app_nue_CCQE :
+                  1.170@#AN_app_nue_CC1pi :
+//                  0.276@#AN_app_nue_NC :
+                  1.311@#AN_app_nuebar_CCQE :
+                  1.311@#AN_app_nuebar_CC1pi :
+//                  0.425@#AN_app_nuebar_NC :
+//                  1.000@#AN_app_numu_CCQE :
+//                  1.0@#AN_app_numu_CC1pi :
+                  0.425@#AN_app_numu_NC :
+//                  1.000@#AN_app_numubar_CCQE :
+//                  1.0@#AN_app_numubar_CC1pi :
+                  0.425@#AN_app_numubar_NC
+    @signalerror     = 0.078 : 0.000001
+    @backgrounderror = 0.078 : 0.000001
+    @sys_on_function = "chiSpectrumTilt"
+    @sys_off_function = "chiNoSysSpectrum"
+    @energy_window = 0.0 : 1.25
+>
+
+/* 3 */
+rule(#AN_Disapperance)<
+    @signal = 0.961@#AN_dis_numu_CCQE :
+              0.961@#AN_dis_numu_CC1pi :
+              0.961@#AN_dis_numu_CCother :
+              1.287@#AN_dis_numubar_CCQE :
+              1.287@#AN_dis_numubar_CC1pi :
+              1.287@#AN_dis_numubar_CCother
+    @background = //1.000@#AN_dis_nue_sig_CCQE :
+                  //1.000@#AN_dis_nue_sig_CC1pi :
+//                  1.0@#AN_dis_nue_sig_CCother :
+//                  1.000@#AN_dis_nuebar_sig_CCQE :
+//                  1.000@#AN_dis_nuebar_sig_CC1pi :
+//                  1.0@#AN_dis_nuebar_sig_CCother :
+//                  1.000@#AN_dis_nue_CCQE :
+//                  1.000@#AN_dis_nue_CC1pi :
+//                  1.0@#AN_dis_nue_CCother :
+//                  0.625@#AN_dis_nue_NC :
+//                  1.000@#AN_dis_nuebar_CCQE :
+//                  1.000@#AN_dis_nuebar_CC1pi :
+//                  1.0@#AN_dis_nuebar_CCother :
+//                  0.625@#AN_dis_nuebar_NC :
+                  0.625@#AN_dis_numu_NC :
+                  0.625@#AN_dis_numubar_NC
+    @signalerror     = 0.072 : 0.000001
+    @backgrounderror = 0.072 : 0.000001
+    @sys_on_function = "chiSpectrumTilt"
+    @sys_off_function = "chiNoSysSpectrum"
+    @energy_window = 0.0 : 10.0
+>
+/**********************END**********************/

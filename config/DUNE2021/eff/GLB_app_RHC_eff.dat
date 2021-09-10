@@ -1,0 +1,20 @@
+include "./DUNE2021/eff/post_app_RHC_numu_bkg.txt"
+
+include "./DUNE2021/eff/post_app_RHC_numubar_bkg.txt" 
+
+include "./DUNE2021/eff/post_app_RHC_nue_bkg.txt"
+
+include "./DUNE2021/eff/post_app_RHC_nuebar_bkg.txt"
+
+include "./DUNE2021/eff/post_app_RHC_NC_bkg.txt"
+
+include "./DUNE2021/eff/post_app_RHC_aNC_bkg.txt"
+
+include "./DUNE2021/eff/post_app_RHC_nue_sig.txt"
+
+include "./DUNE2021/eff/post_app_RHC_nuebar_sig.txt"
+
+include "./DUNE2021/eff/post_app_RHC_nutau_bkg.txt"
+
+include "./DUNE2021/eff/post_app_RHC_nutaubar_bkg.txt"
+

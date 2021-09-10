@@ -1,0 +1,10 @@
+include "./DUNE2021/eff/post_dis_FHC_numu_sig.txt"
+
+include "./DUNE2021/eff/post_dis_FHC_numubar_sig.txt"
+
+include "./DUNE2021/eff/post_dis_FHC_NC_bkg.txt"
+
+include "./DUNE2021/eff/post_dis_FHC_nutau_bkg.txt"
+
+include "./DUNE2021/eff/post_dis_FHC_nutaubar_bkg.txt"
+
