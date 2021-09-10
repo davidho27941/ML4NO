@@ -135,8 +135,8 @@ int main(int argc, char *argv[])
   //  int TOTALsample= atoi(argv[1]); //choosed by the user
 
     
-    glbInitExperiment("./DUNE2021/DUNE_GLoBES.glb",&glb_experiment_list[0],&glb_num_of_exps);
-    glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
+    glbInitExperiment("/home/user/workplace/ML4NO/config/DUNE2021/DUNE_GLoBES.glb",&glb_experiment_list[0],&glb_num_of_exps);
+    glbInitExperiment("/home/user/workplace/ML4NO/config/HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
     glb_params true_values = glbAllocParams();
 
   /* Set standard oscillation parameters (cf. hep-ph/0405172v5) */
