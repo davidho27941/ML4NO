@@ -358,6 +358,77 @@ int do_poisson_fluctuation(glb_params test_values)
   // }  
   // printf("\n"); 
 
+
+  // int index;
+  // for (int exp=0; exp <= 1; exp++){
+  //     int rule_max= glbGetNumberOfRules(exp);
+  //     for (int rule = 0; rule < rule_max; rule++){
+  //       glbGetEnergyWindowBins(exp, rule, &ew_low, &ew_high);
+  //     // printf("ew_low = %d, ew_high = %d ",ew_low,ew_high);
+  //   //以下開始判斷是哪個Spectrum
+  //       index = 10*exp + rule;
+  //       switch(index){
+  //           case 0 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             ve_dune_poisson[i] = random_poisson(ve_dune[i]);
+  //             //printf("%g ",ve_dune_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //           case 1 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             vebar_dune_poisson[i] = random_poisson(vebar_dune[i]);
+  //             //printf("%g ",vebar_dune_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //           case 2 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             vu_dune_poisson[i] = random_poisson(vu_dune[i]);
+  //             //printf("%g ",vu_dune_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //           case 3 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             vubar_dune_poisson[i] = random_poisson(vubar_dune[i]);
+  //             //printf("%g ",vubar_dune_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //           case 10 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             ve_t2hk_poisson[i] = random_poisson(ve_t2hk[i]);
+  //             //printf("%g ",ve_t2hk_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //           case 11 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             vu_t2hk_poisson[i] = random_poisson(vu_t2hk[i]);
+  //             //printf("%g ",vu_t2hk_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //           case 12 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             vebar_t2hk_poisson[i] = random_poisson(vebar_t2hk[i]);
+  //             //printf("%g ",vebar_t2hk_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //           case 13 :
+  //             for (i=ew_low; i <= ew_high; i++) {
+  //             vubar_t2hk_poisson[i] = random_poisson(vubar_t2hk[i]);
+  //             //printf("%g ",vubar_t2hk_poisson[i]);
+  //             // printf("%d ",i);
+  //             }
+  //             break;
+  //       }
+  //     }
+  // } 
+
+
   return 0;
 }
 
@@ -711,21 +782,40 @@ int main(int argc, char *argv[])
     glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
 
   /* 設定輸出檔案位置 */ 
-    int len = strlen("/docker_workplace/two_delta_chi2_distribution/two_delta_chi2_distribution_angle") 
+    int len = strlen("/docker_workplace/two_delta_chi2_distribution_DUNE_angle") + strlen(argv[1])
+                            +strlen("/two_delta_chi2_distribution_DUNE_angle")
                             + strlen(argv[1]) + strlen("_part") + strlen(argv[4]) + strlen(".dat") + 1;
     char path[len];
-    strcpy(path,"/docker_workplace/two_delta_chi2_distribution/two_delta_chi2_distribution_angle");
+    strcpy(path,"/docker_workplace/two_delta_chi2_distribution_DUNE_angle");
+    strcat(path, argv[1]);
+    strcat(path,"/two_delta_chi2_distribution_DUNE_angle");
     strcat(path, argv[1]);
     strcat(path, "_part");
     strcat(path, argv[4]);
     strcat(path, ".dat");
 
+    printf("%s\n",path);
     //FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
     FILE* OUT =  fopen(path,"w");//建立輸出檔案
 
+  // /* 設定輸出檔案位置 */ 
+    // int len = strlen("two_delta_chi2_distribution_angle")
+    //                         + strlen(argv[1]) + strlen("_part") + strlen(argv[4]) + strlen(".dat") + 1;
+    // char path[len];
+    // strcpy(path,"two_delta_chi2_distribution_angle");
+    // strcat(path, argv[1]);
+    // strcat(path, "_part");
+    // strcat(path, argv[4]);
+    // strcat(path, ".dat");
+
+    // printf("%s\n",path);
+    // FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
+    // //FILE* OUT =  fopen(path,"w");//建立輸出檔案
+
+
 double angle = atof(argv[1]);
 int TOTALsample = atof(argv[2]);
-double q0, q1;
+double q0,  q1;
 // fprintf(OUT," CPV 90度 \n");
 //fprintf(OUT," delta_x_0 x_cpc_0 x_cpv_0 delta_x_1 x_cpc_1 x_cpv_1 \n");
   for (int count = 0; count < TOTALsample; count++)
@@ -737,15 +827,23 @@ double q0, q1;
 
       q0 = delta_chi2(0 , 1 , angle, atof(argv[3])); //(double CP , double MO , double deltacp, int EXP)
       fprintf(OUT," %g ", q0);   
-      fprintf(OUT," %g %g ", a , b);  
+      //fprintf(OUT," %g %g ", a , b);  
 
-      // q0 = delta_chi2(180 , angle);
-      // fprintf(OUT," %g ", q0);  
-      // fprintf(OUT," %g %g ", a , b); 
+      q0 = delta_chi2(180, 1 , angle, atof(argv[3]));
+      fprintf(OUT," %g ", q0);  
+      //fprintf(OUT," %g %g ", a , b); 
+
+      q0 = delta_chi2(0, -1 , angle, atof(argv[3]));
+      fprintf(OUT," %g ", q0);  
+      //fprintf(OUT," %g %g ", a , b); 
+
+      q0 = delta_chi2(180, -1 , angle, atof(argv[3]));
+      fprintf(OUT," %g ", q0);  
+      //fprintf(OUT," %g %g ", a , b); 
 
       q1 = delta_chi2(1 , 1, angle, atof(argv[3]));
       fprintf(OUT," %g ", q1);
-      fprintf(OUT," %g %g ", a , b);      
+      //fprintf(OUT," %g %g ", a , b);      
       printf("%d \n",count);
 
     fprintf(OUT," \n");
