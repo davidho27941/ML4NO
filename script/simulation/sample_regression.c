@@ -35,7 +35,8 @@ vubar_t2hk_poisson : 12
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_spline.h>
 
-#define degree M_PI/180;
+#define degree M_PI/180
+
 /***************************************************************************
  *                            M A I N   P R O G R A M                      *
  ***************************************************************************/
@@ -163,34 +164,34 @@ int main(int argc, char *argv[]) {
     double delta_sdm = (8.04 - 6.82)/2;
     double delta_ldm = (2.598 - 2.431)/2;
   
-    int location;
+    int num_simulatiom;
     // int TOTALsample= 1000000 ;//choosed by the user 
     int TOTALsample = atof(argv[1]);
 
     int ew_low, ew_high;
-    int i, exp, channel;
+    int i, num_expriment, channel;
     
     
-    for(exp=0; exp<2; exp++){
-        double *bin_c_energy  = glbGetBinCentersListPtr(exp);
-        double *bin_size      = glbGetBinSizeListPtr(exp);
-        int channel_max= glbGetNumberOfRules(exp);
+    for( num_expriment = 0;  num_expriment < 2;  num_expriment++){
+        double *bin_c_energy  = glbGetBinCentersListPtr( num_expriment );
+        double *bin_size      = glbGetBinSizeListPtr( num_expriment );
+        int channel_max= glbGetNumberOfRules( num_expriment );
         for(channel=0;channel<channel_max;channel++){
-            glbGetEnergyWindowBins(exp, channel, &ew_low, &ew_high);
-            fprintf(BIN,"#central energy %i %i [GeV] \n",exp,channel);
+            glbGetEnergyWindowBins( num_expriment, channel, &ew_low, &ew_high);
+            fprintf(BIN,"#central energy %i %i [GeV] \n", num_expriment, channel);
             for (int i=ew_low; i <= ew_high; i++) { 
-	        fprintf(BIN,"%g ",bin_c_energy[i]);
+	        fprintf(BIN, "%g ", bin_c_energy[i]);
             } 
-            fprintf(BIN,"\n");
-            fprintf(BIN,"#bin size %i %i [GeV]\n",exp,channel);
+            fprintf(BIN, "\n");
+            fprintf(BIN, "#bin size %i %i [GeV]\n", num_expriment, channel);
             for (int i=ew_low; i <= ew_high; i++){ 
-	        fprintf(BIN,"%g ",bin_size[i]);
+	        fprintf(BIN, "%g ", bin_size[i]);
             }
-            fprintf(BIN,"\n");
+            fprintf(BIN, "\n");
         }
     }
     
-    for (location=0;location<TOTALsample;location++){
+    for (num_simulatiom=0;num_simulatiom<TOTALsample;num_simulatiom++){
   
         // double theta12 = TCRandom (theta12_c, delta_12 ); 
         // double theta13 = TCRandom (theta13_c, delta_13 );
@@ -205,7 +206,7 @@ int main(int argc, char *argv[]) {
         double ldm = (2.598 + 2.431)/2 + (keithRandom()-0.5)*(2.598-2.431);
 
         double sign_ldm = 1;
-        if (keithRandom()<0.5) sign_ldm = -1;
+        if ( keithRandom() < 0.5) sign_ldm = -1;
         ldm = sign_ldm * ldm;
 
         // if(keithRandom()<0.33) {theta23 = 45;} 
@@ -214,7 +215,7 @@ int main(int argc, char *argv[]) {
         // if (deltacp<0){deltacp=0;}
         // else if (deltacp>360){deltacp=180;}
 
-        double deltacp = keithRandom()*360.0;
+        double deltacp = keithRandom() * 360.0;
   
         int OCTANT = LABEL_OT(theta23);
         int CPV    = LABEL_CP(deltacp);
@@ -226,18 +227,19 @@ int main(int argc, char *argv[]) {
         glbSetOscillationParameters(true_values);
         glbSetRates();
        
-        exp = 0;
+        num_expriment = 0;
         channel = 0;
-        for(exp=0; exp<2; exp++){
-            int channel_max= glbGetNumberOfRules(exp);
-            for(channel=0;channel<channel_max;channel++){
+        for ( num_expriment = 0; num_expriment < 2; num_expriment++){
+            int channel_max = glbGetNumberOfRules( num_expriment );
+            for ( channel = 0; channel < channel_max ; channel++){
       
-                glbGetEnergyWindowBins(exp, channel, &ew_low, &ew_high);
+                glbGetEnergyWindowBins( num_expriment, channel, &ew_low, &ew_high);
   
-                double *true_rates = glbGetRuleRatePtr(exp, channel);
+                double *true_rates = glbGetRuleRatePtr( num_expriment, channel );
                 int count = 0;
 
-                for (i=ew_low; i <= ew_high; i++){fprintf(OUT,"%g ",true_rates[i]);
+                for (i=ew_low; i <= ew_high; i++){
+	            fprintf(OUT,"%g ",true_rates[i]);
                     count += 1;
                 }
             }
@@ -246,7 +248,7 @@ int main(int argc, char *argv[]) {
         // double chi2;
         // chi2=glbChiSys(test_values,GLB_ALL,GLB_ALL);
         fprintf(OUT,"  %g %g %g %g %g %g %i %i %i\n",theta12_c,theta13,theta23,deltacp,sdm_c,ldm,OCTANT,CPV,MO);
-        printf("%i \n",location);  
+        printf("%i \n",num_simulatiom);  
     }
     /* Clean up */
     glbFreeParams(true_values);
