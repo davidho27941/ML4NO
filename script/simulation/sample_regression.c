@@ -3,19 +3,8 @@
 /* theta23, theta13, m31 flat distribution in 3 sigma range */
 /* deltacp flat distribution in 0~360 */
 
-/* 使用方式(產100K組) :  ./sample_regression 1000000   */
-
-/* 資料順序 : 
-ve_dune_poisson : 66
-vebar_dune_poisson : 66
-vu_dune_poisson  66
-vubar_dune_poisson : 66
-
-ve_t2hk_poisson : 8
-vu_t2hk_poisson : 12
-vebar_t2hk_poisson : 8
-vubar_t2hk_poisson : 12
-  */
+/* 使用方式(產100K組) :  ./sample_regression <filename.h5> <num> */
+/* Caution: `num` should not greater than 1000. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -103,37 +92,36 @@ double TCRandom(double mu, double sigma) {
     return u;
 }
 
-
-int LABEL_OT(double x) {
-    if(x>45) {
-        return 1;
+int case_judger (int mode, double value) {
+    /*
+     * mode 1: Octant;
+     * mode 2: CPV;
+     * mode 3: MO;
+     */
+    int result;
+    switch (mode){
+    	case 1:
+            if ((value == 0) || (value==180)){
+	        result = 0;
+	    } else {
+	        result = 1;
+	    }
+	    break;
+	case 2:
+	    if (value > 45) {
+                result = 1;
+            } else if (value == 45) {
+                result = 0;
+            } else {
+                result = -1;
+            }
+	    break;
+	case 3:
+            result = value > 0 ? 1 : -1;
+	    break;
     }
-    else if (x==45) {
-	return 0;
-    }
-    else {
-	return -1;
-    }
+    return result;
 }
-
-int LABEL_CP(double x) {
-    if( (x==0) || (x==180) ) {
-	return 0;
-    }
-    else {
-	return 1;
-    }
-}
-
-int LABEL_MO(double x) {
-    if(x>0) {
-	return 1;
-    }
-    else {
-	return -1;
-    }
-}
-
 
 int main(int argc, char *argv[]) { 
 
@@ -142,26 +130,26 @@ int main(int argc, char *argv[]) {
     /*
      * Read the prefix of file name and add suffix to two child string.
      */
-    char prefix[32],
-         filename_bin[32],
-         filename_spectrum[32];
-    char bin_info_dset_name[] = "binfo_expr_0_channel_0\0";
-    strcpy(prefix, argv[1]);
-    strcpy(filename_bin, prefix);
-    strcpy(filename_spectrum, prefix);
+    char filename[32],
+	 Group_name[32],
+         channel_info_dset_name[] = "/Spectrum/expr_0/channel_0\0",
+         size_info_dset_name[] = "/Spectrum/expr_0/channel_0/Bin_ize\0",
+         energy_info_dset_name[] = "/Spectrum/expr_0/channel_0/Bin_energy\0",
+         expr_info_dset_name[] = "/Spectrum/expr_0\0";
+    strcpy(filename, argv[1]);
 
-    char suffix_bin[]        = "_bin.h5";
-    char suffix_spectrum[]   = "_spectrum.h5";
-    strcat(filename_bin, suffix_bin);
-    strcat(filename_spectrum, suffix_spectrum);
-    
     int  TOTALsample = atof(argv[2]);
-    //int  DIM0        = atof(argv[3]);
-    //int  DIM1        = atof(argv[4]);
+
     /*
      * Declare the variables for hdf5.
      */
-    hid_t         file_id, space_id, dset_id;
+    hid_t         file_id, 
+		  space_id, 
+		  dset_id,
+		  group_id,
+		  sub_group_id,
+		  sub2_group_id,
+		  sub3_group_id;
     herr_t        status;
     hsize_t       dims[2];
 
@@ -173,19 +161,12 @@ int main(int argc, char *argv[]) {
     glb_params true_values = glbAllocParams();
 
     /* Set standard oscillation parameters (cf. hep-ph/0405172v5) */
-
-    // FILE* BIN = fopen("bin_setup_regression.dat","w"); //建立輸出檔案
-    // FILE* OUT = fopen("sample_regression.dat","w"); //建立輸出檔案
-    
     double theta12_c = 33.44; 
     // double theta13_c = 8.57;
     // double theta23_c = 45;
     double sdm_c = 7.42;
     // double ldm_c = 2.514;
 
-    // glb_params test_values = glbAllocParams();    
-    // glbDefineParams(test_values,theta12_c*degree,theta13_c*degree,theta23_c*degree,195,1e-5*sdm_c,1e-3*ldm_c);  
-    // glbSetDensityParams(test_values,1.0,GLB_ALL); 
 
     double delta_12  = (35.86 - 31.27)/2;
     double delta_13  = (8.97 - 8.20)/2;
@@ -194,59 +175,63 @@ int main(int argc, char *argv[]) {
     double delta_ldm = (2.598 - 2.431)/2;
   
     int    num_simulatiom;
-    // int TOTALsample= 1000000 ;//choosed by the user 
 
     int    ew_low, ew_high;
     int    i, j, num_expriment, channel;
     
-    file_id = H5Fcreate(filename_bin, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+    file_id   = H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+    group_id = H5Gcreate(file_id, "/Spectrum", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     for ( num_expriment = 0;  num_expriment < 2;  num_expriment++){
         double *bin_c_energy  =   glbGetBinCentersListPtr( num_expriment );
         double *bin_size      =   glbGetBinSizeListPtr( num_expriment );
         int    channel_max    =   glbGetNumberOfRules( num_expriment );
         
-	bin_info_dset_name[11] = num_expriment+'0';
+	expr_info_dset_name[15] = num_expriment+'0';
+        sub_group_id = H5Gcreate(file_id, expr_info_dset_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
         for(channel=0;channel<channel_max;channel++){
             glbGetEnergyWindowBins( num_expriment, channel, &ew_low, &ew_high);
             int energy_window = ew_high - ew_low;
 	    hsize_t dims_s[1] = {energy_window};
 
-	    space_id  =  H5Screate_simple(1, dims_s, NULL);
-	    double dset_channel[energy_window];
-	    //  printf("ew_low: %d, ew_high: %d\n", ew_low, ew_high);
-            
+	    double dset_channel_eng[energy_window];
+	    double dset_channel_size[energy_window];
+
 	    j = 0;
 	    for ( i = ew_low; i <= ew_high; i++) { 
-		dset_channel[j] = bin_c_energy[i];
+		dset_channel_eng[j]  = bin_c_energy[i];
+		dset_channel_size[j] = bin_size[i];
 		j += 1;
             }
 	    
-	    bin_info_dset_name[21]  =  channel+'0';
+	    channel_info_dset_name[15]  =  num_expriment+'0';
+	    channel_info_dset_name[25]  =  channel+'0';
+	    energy_info_dset_name[15]   =  num_expriment+'0';
+	    energy_info_dset_name[25]   =  channel+'0';
+ 	    size_info_dset_name[15]   =  num_expriment+'0';
+            size_info_dset_name[25]   =  channel+'0';
 
-	    printf(" bin_info_dset_name: %s\n", bin_info_dset_name);
-	    dset_id       =  H5Dcreate(file_id, bin_info_dset_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
+            sub2_group_id =  H5Gcreate(file_id, channel_info_dset_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+	    space_id  =  H5Screate_simple(1, dims_s, NULL);
+
+	    dset_id       =  H5Dcreate(sub2_group_id, energy_info_dset_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
                                 H5P_DEFAULT);
-            status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dset_channel);
-            status        =  H5Dclose(dset_id);
+            status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dset_channel_eng);
+	    status        =  H5Dclose(dset_id);
+	    dset_id       =  H5Dcreate(sub2_group_id, size_info_dset_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
+                                H5P_DEFAULT);
+            status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dset_channel_size);
+	    status        =  H5Dclose(dset_id);
             status        =  H5Sclose(space_id);
-
-	    /*
-	    fprintf(BIN,"#central energy %i %i [GeV] \n", num_expriment, channel);
-            for (int i=ew_low; i <= ew_high; i++) { 
-	        fprintf(BIN, "%g ", bin_c_energy[i]);
-            } 
-            fprintf(BIN, "\n");
-            fprintf(BIN, "#bin size %i %i [GeV]\n", num_expriment, channel);
-            for (int i=ew_low; i <= ew_high; i++){ 
-	        fprintf(BIN, "%g ", bin_size[i]);
-            }
-            fprintf(BIN, "\n");
-	    */
+	    status        =  H5Gclose(sub2_group_id);
+	    
         }
+	status        =  H5Gclose(sub_group_id);
     }
-
-    status        =  H5Fclose(file_id);
-/*    
+    status        =  H5Gclose(group_id);
+     
+    double     dataset[TOTALsample][9], 
+	       TRUE_RATE[TOTALsample][2][4][8],
+	       TRUE_RATE_PRIME[2][4][8][TOTALsample];
     for (num_simulatiom=0;num_simulatiom<TOTALsample;num_simulatiom++){
   
         // double theta12 = TCRandom (theta12_c, delta_12 ); 
@@ -273,9 +258,9 @@ int main(int argc, char *argv[]) {
 
         double deltacp = keithRandom() * 360.0;
   
-        int OCTANT = LABEL_OT(theta23);
-        int CPV    = LABEL_CP(deltacp);
-        int MO     = LABEL_MO(ldm);
+        int octant = case_judger(1, theta23);
+        int cpv    = case_judger(2, deltacp);
+        int mo     = case_judger(3, ldm);
 
         glbDefineParams(true_values,theta12_c*degree,theta13*degree,theta23*degree,deltacp*degree,1e-5*sdm_c,1e-3*ldm);
         glbSetDensityParams(true_values,1.0,GLB_ALL);
@@ -284,31 +269,76 @@ int main(int argc, char *argv[]) {
         glbSetRates();
        
         num_expriment = 0;
-        channel = 0;
-        for ( num_expriment = 0; num_expriment < 2; num_expriment++){
+        channel = 0; 
+	
+	for ( num_expriment = 0; num_expriment < 2; num_expriment++){
             int channel_max = glbGetNumberOfRules( num_expriment );
-            for ( channel = 0; channel < channel_max ; channel++){
-      
+	    
+	    for ( channel = 0; channel < channel_max ; channel++){
                 glbGetEnergyWindowBins( num_expriment, channel, &ew_low, &ew_high);
-  
                 double *true_rates = glbGetRuleRatePtr( num_expriment, channel );
                 int count = 0;
-
                 for (i=ew_low; i <= ew_high; i++){
-	            fprintf(OUT,"%g ",true_rates[i]);
+	            TRUE_RATE[num_simulatiom][num_expriment][channel][count] = true_rates[i];
                     count += 1;
                 }
             }
         }
-
-        // double chi2;
-        // chi2=glbChiSys(test_values,GLB_ALL,GLB_ALL);
-        fprintf(OUT,"  %g %g %g %g %g %g %i %i %i\n",theta12_c,theta13,theta23,deltacp,sdm_c,ldm,OCTANT,CPV,MO);
-        printf("%i \n",num_simulatiom);  
+        double tmp_array[9] = {theta12_c, theta13, theta23, deltacp, sdm_c, ldm, octant, cpv, mo};
+	int  count = 0;
+	for ( count = 0; count < 9; count++){
+	    dataset[num_simulatiom][count] = tmp_array[count];
+	}
     }
-*/
+    int k, l;
+    for ( i = 0; i < TOTALsample; i++){
+        for ( j = 0; j < 2; j++){
+	    for ( k = 0; k < 4; k++){
+	       for ( l = 0; l < 8; l++){
+	           TRUE_RATE_PRIME[j][k][l][i] = TRUE_RATE[i][j][k][l];
+	       }
+	    }
+	}
+    }
+
+    char channel_spec_true_name[] = "/Parameter/true/expr_0/channel_0\0",
+         expr_spec_true_name[] = "/Parameter/true/expr_0\0", 
+         expr_spec_sim_name[] = "/Parameter/simulation\0";
+    
+    hsize_t dims_s[2]    =  {TOTALsample, 8};
+    group_id     =  H5Gcreate(file_id, "/Parameter", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    sub_group_id =  H5Gcreate(file_id, "/Parameter/true/", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    for ( i = 0; i < 2; i ++){
+        expr_spec_true_name[21] = i+'0';
+	sub2_group_id =  H5Gcreate(file_id, expr_spec_true_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+	for ( j = 0; j < 4; j++){
+            channel_spec_true_name[21] = i+'0';
+	    channel_spec_true_name[31] = j+'0';
+            space_id      =  H5Screate_simple(2, dims_s, NULL);
+            dset_id       =  H5Dcreate(sub2_group_id, channel_spec_true_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
+                                H5P_DEFAULT);
+            status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, TRUE_RATE_PRIME[i][j]);
+	    status        =  H5Dclose(dset_id);
+            status        =  H5Sclose(space_id);
+	}
+	status        =  H5Gclose(sub2_group_id);
+    }
+    status        =  H5Gclose(sub_group_id);
+    
+    hsize_t dims_d[2]    =  {TOTALsample, 9};
+    sub_group_id  =  H5Gcreate(file_id, "/Parameter/simulation/", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    space_id      =  H5Screate_simple(2, dims_d, NULL);
+    dset_id       =  H5Dcreate(sub_group_id, "/Parameter/simulation/dataset", H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
+                                H5P_DEFAULT);
+    status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dataset);
+    status        =  H5Dclose(dset_id);
+    status        =  H5Sclose(space_id);
+    status        =  H5Gclose(sub_group_id); 
+    status        =  H5Gclose(group_id);
+    
     /* Clean up */
     glbFreeParams(true_values);
 
+    status        =  H5Fclose(file_id);
     return 0;  
 }
