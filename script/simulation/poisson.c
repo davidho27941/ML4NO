@@ -665,44 +665,41 @@ double delta_chi2 (int CP, int MO, double deltacp, int EXP) {
 
 int main(int argc, char *argv[]) { 
 
-    char filename[32];
+	char filename[32];
 	strcpy(filename, argv[1]);
 	int    TOTALsample = atof(argv[2]);
-    double angle       = atof(argv[3]);
+	double angle       = atof(argv[3]);
 	int    expr        = atof(argv[4]);
 	
-    glbInit(argv[0]);
-    glbInitExperiment("./DUNE2021/DUNE_GLoBES.glb",&glb_experiment_list[0],&glb_num_of_exps);
-    glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
+	glbInit(argv[0]);
+	glbInitExperiment("./DUNE2021/DUNE_GLoBES.glb",&glb_experiment_list[0],&glb_num_of_exps);
+	glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
 
-    printf("File name: %s\n",filename);
-    //FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
-    FILE* OUT =  fopen(filename,"w");//建立輸出檔案
-
+	printf("File name: %s\n",filename);
+	//FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
+	FILE* OUT =  fopen(filename,"w");//建立輸出檔案
+	
 	double q0,  q1;
 	for (int count = 0; count < TOTALsample; count++) { 
-    	q0 = delta_chi2(0 , 1 , angle, expr); 
-    	fprintf(OUT," %g ", q0);   
+		q0 = delta_chi2(0 , 1 , angle, expr); 
+		fprintf(OUT," %g ", q0);   
   
 		printf("5\n");
     	q0 = delta_chi2(180, 1 , angle, expr);
     	fprintf(OUT," %g ", q0);  
 
-
-    	q0 = delta_chi2(0, -1 , angle, expr);
-    	fprintf(OUT," %g ", q0);  
-
+		q0 = delta_chi2(0, -1 , angle, expr);
+		fprintf(OUT," %g ", q0);  
 
     	q0 = delta_chi2(180, -1 , angle, expr);
-    	fprintf(OUT," %g ", q0);  
+		fprintf(OUT," %g ", q0);  
 
-
-    	q1 = delta_chi2(1 , 1, angle, expr);
-    	fprintf(OUT," %g ", q1);
+		q1 = delta_chi2(1 , 1, angle, expr);
+		fprintf(OUT," %g ", q1);
    
-    	printf("%d \n",count);
+		printf("%d \n",count);
 
-    	fprintf(OUT," \n");
+		fprintf(OUT," \n");
     }
 
   return 0;  
