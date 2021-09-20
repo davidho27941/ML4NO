@@ -49,7 +49,8 @@ float keithRandom() {
 }
 
 
-double randn (double mu, double sigma) {/*mu is the central value, sigma is the width of gaussian distribution. */
+double randn (double mu, double sigma) {
+	/*mu is the central value, sigma is the width of gaussian distribution. */
     double U1, U2, W, mult;
     static double X1, X2;
     static int call = 0;
@@ -125,13 +126,14 @@ int case_judger (int mode, double value) {
 
 int main(int argc, char *argv[]) { 
 
-    glbInit(argv[0]);                /* Initialize GLoBES and define chi^2 functions */
+	/* Initialize GLoBES and define chi^2 functions */
+    glbInit(argv[0]);                
     
     /*
      * Read the prefix of file name and add suffix to two child string.
      */
     char filename[32],
-	 Group_name[32],
+	 	 Group_name[32],
          channel_info_dset_name[] = "/Spectrum/expr_0/channel_0\0",
          size_info_dset_name[] = "/Spectrum/expr_0/channel_0/Bin_ize\0",
          energy_info_dset_name[] = "/Spectrum/expr_0/channel_0/Bin_energy\0",
@@ -144,12 +146,12 @@ int main(int argc, char *argv[]) {
      * Declare the variables for hdf5.
      */
     hid_t         file_id, 
-		  space_id, 
-		  dset_id,
-		  group_id,
-		  sub_group_id,
-		  sub2_group_id,
-		  sub3_group_id;
+				  space_id, 
+				  dset_id,
+				  group_id,
+				  sub_group_id,
+				  sub2_group_id,
+				  sub3_group_id;
     herr_t        status;
     hsize_t       dims[2];
 
@@ -186,52 +188,51 @@ int main(int argc, char *argv[]) {
         double *bin_size      =   glbGetBinSizeListPtr( num_expriment );
         int    channel_max    =   glbGetNumberOfRules( num_expriment );
         
-	expr_info_dset_name[15] = num_expriment+'0';
+		expr_info_dset_name[15] = num_expriment+'0';
         sub_group_id = H5Gcreate(file_id, expr_info_dset_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
         for(channel=0;channel<channel_max;channel++){
             glbGetEnergyWindowBins( num_expriment, channel, &ew_low, &ew_high);
             int energy_window = ew_high - ew_low;
-	    hsize_t dims_s[1] = {energy_window};
+	    	hsize_t dims_s[1] = {energy_window};
 
-	    double dset_channel_eng[energy_window];
-	    double dset_channel_size[energy_window];
+			double dset_channel_eng[energy_window];
+			double dset_channel_size[energy_window];
 
-	    j = 0;
-	    for ( i = ew_low; i <= ew_high; i++) { 
-		dset_channel_eng[j]  = bin_c_energy[i];
-		dset_channel_size[j] = bin_size[i];
-		j += 1;
-            }
+			j = 0;
+			for ( i = ew_low; i <= ew_high; i++) { 
+				dset_channel_eng[j]  = bin_c_energy[i];
+				dset_channel_size[j] = bin_size[i];
+				j += 1;
+	        }
 	    
-	    channel_info_dset_name[15]  =  num_expriment+'0';
-	    channel_info_dset_name[25]  =  channel+'0';
-	    energy_info_dset_name[15]   =  num_expriment+'0';
-	    energy_info_dset_name[25]   =  channel+'0';
- 	    size_info_dset_name[15]   =  num_expriment+'0';
+			channel_info_dset_name[15]  =  num_expriment+'0';
+			channel_info_dset_name[25]  =  channel+'0';
+			energy_info_dset_name[15]   =  num_expriment+'0';
+			energy_info_dset_name[25]   =  channel+'0';
+	 	    size_info_dset_name[15]   =  num_expriment+'0';
             size_info_dset_name[25]   =  channel+'0';
 
             sub2_group_id =  H5Gcreate(file_id, channel_info_dset_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-	    space_id  =  H5Screate_simple(1, dims_s, NULL);
+			space_id  =  H5Screate_simple(1, dims_s, NULL);
 
-	    dset_id       =  H5Dcreate(sub2_group_id, energy_info_dset_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
-                                H5P_DEFAULT);
+			dset_id       =  H5Dcreate(sub2_group_id, energy_info_dset_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
+		                            H5P_DEFAULT);
             status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dset_channel_eng);
-	    status        =  H5Dclose(dset_id);
-	    dset_id       =  H5Dcreate(sub2_group_id, size_info_dset_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
-                                H5P_DEFAULT);
+			status        =  H5Dclose(dset_id);
+			dset_id       =  H5Dcreate(sub2_group_id, size_info_dset_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
+		                            H5P_DEFAULT);
             status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dset_channel_size);
-	    status        =  H5Dclose(dset_id);
+	    	status        =  H5Dclose(dset_id);
             status        =  H5Sclose(space_id);
-	    status        =  H5Gclose(sub2_group_id);
-	    
+	    	status        =  H5Gclose(sub2_group_id);
         }
-	status        =  H5Gclose(sub_group_id);
+		status        =  H5Gclose(sub_group_id);
     }
     status        =  H5Gclose(group_id);
      
     double     dataset[TOTALsample][9], 
-	       TRUE_RATE[TOTALsample][2][4][8],
-	       TRUE_RATE_PRIME[2][4][8][TOTALsample];
+			   TRUE_RATE[TOTALsample][2][4][8],
+			   TRUE_RATE_PRIME[2][4][8][TOTALsample];
     for (num_simulatiom=0;num_simulatiom<TOTALsample;num_simulatiom++){
   
         // double theta12 = TCRandom (theta12_c, delta_12 ); 
@@ -271,70 +272,70 @@ int main(int argc, char *argv[]) {
         num_expriment = 0;
         channel = 0; 
 	
-	for ( num_expriment = 0; num_expriment < 2; num_expriment++){
-            int channel_max = glbGetNumberOfRules( num_expriment );
-	    
-	    for ( channel = 0; channel < channel_max ; channel++){
-                glbGetEnergyWindowBins( num_expriment, channel, &ew_low, &ew_high);
-                double *true_rates = glbGetRuleRatePtr( num_expriment, channel );
-                int count = 0;
-                for (i=ew_low; i <= ew_high; i++){
-	            TRUE_RATE[num_simulatiom][num_expriment][channel][count] = true_rates[i];
-                    count += 1;
-                }
-            }
-        }
-        double tmp_array[9] = {theta12_c, theta13, theta23, deltacp, sdm_c, ldm, octant, cpv, mo};
-	int  count = 0;
-	for ( count = 0; count < 9; count++){
-	    dataset[num_simulatiom][count] = tmp_array[count];
-	}
+		for ( num_expriment = 0; num_expriment < 2; num_expriment++){
+		        int channel_max = glbGetNumberOfRules( num_expriment );
+			
+			for ( channel = 0; channel < channel_max ; channel++){
+		        glbGetEnergyWindowBins( num_expriment, channel, &ew_low, &ew_high);
+		        double *true_rates = glbGetRuleRatePtr( num_expriment, channel );
+		        int count = 0;
+		        for (i=ew_low; i <= ew_high; i++){
+		        	TRUE_RATE[num_simulatiom][num_expriment][channel][count] = true_rates[i];
+		            count += 1;
+		        }
+		    }
+		}
+	 	double tmp_array[9] = {theta12_c, theta13, theta23, deltacp, sdm_c, ldm, octant, cpv, mo};
+		int  count = 0;
+		for ( count = 0; count < 9; count++){
+			dataset[num_simulatiom][count] = tmp_array[count];
+		}
     }
     int k, l;
     for ( i = 0; i < TOTALsample; i++){
         for ( j = 0; j < 2; j++){
-	    for ( k = 0; k < 4; k++){
-	       for ( l = 0; l < 8; l++){
-	           TRUE_RATE_PRIME[j][k][l][i] = TRUE_RATE[i][j][k][l];
-	       }
-	    }
-	}
+			for ( k = 0; k < 4; k++){
+				for ( l = 0; l < 8; l++){
+	    	   		TRUE_RATE_PRIME[j][k][l][i] = TRUE_RATE[i][j][k][l];
+			   	}
+			}
+		}
     }
 
     char channel_spec_true_name[] = "/Parameter/true/expr_0/channel_0\0",
-         expr_spec_true_name[] = "/Parameter/true/expr_0\0", 
-         expr_spec_sim_name[] = "/Parameter/simulation\0";
+         expr_spec_true_name[]    = "/Parameter/true/expr_0\0", 
+         expr_spec_sim_name[]     = "/Parameter/simulation\0";
     
     hsize_t dims_s[2]    =  {TOTALsample, 8};
-    group_id     =  H5Gcreate(file_id, "/Parameter", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-    sub_group_id =  H5Gcreate(file_id, "/Parameter/true/", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    group_id     		 =  H5Gcreate(file_id, "/Parameter", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+	sub_group_id 		 =  H5Gcreate(file_id, "/Parameter/true/", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     for ( i = 0; i < 2; i ++){
         expr_spec_true_name[21] = i+'0';
-	sub2_group_id =  H5Gcreate(file_id, expr_spec_true_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-	for ( j = 0; j < 4; j++){
+		sub2_group_id =  H5Gcreate(file_id, expr_spec_true_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+		for ( j = 0; j < 4; j++){
             channel_spec_true_name[21] = i+'0';
-	    channel_spec_true_name[31] = j+'0';
+	    	channel_spec_true_name[31] = j+'0';
             space_id      =  H5Screate_simple(2, dims_s, NULL);
             dset_id       =  H5Dcreate(sub2_group_id, channel_spec_true_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
                                 H5P_DEFAULT);
             status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, TRUE_RATE_PRIME[i][j]);
-	    status        =  H5Dclose(dset_id);
+	    	status        =  H5Dclose(dset_id);
             status        =  H5Sclose(space_id);
-	}
-	status        =  H5Gclose(sub2_group_id);
+		}
+		status        =  H5Gclose(sub2_group_id);
     }
     status        =  H5Gclose(sub_group_id);
     
     hsize_t dims_d[2]    =  {TOTALsample, 9};
-    sub_group_id  =  H5Gcreate(file_id, "/Parameter/simulation/", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-    space_id      =  H5Screate_simple(2, dims_d, NULL);
-    dset_id       =  H5Dcreate(sub_group_id, "/Parameter/simulation/dataset", H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
+    sub_group_id  		 =  H5Gcreate(file_id, "/Parameter/simulation/", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    space_id      		 =  H5Screate_simple(2, dims_d, NULL);
+    dset_id       		 =  H5Dcreate(sub_group_id, "/Parameter/simulation/dataset", H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
                                 H5P_DEFAULT);
-    status        =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dataset);
-    status        =  H5Dclose(dset_id);
-    status        =  H5Sclose(space_id);
-    status        =  H5Gclose(sub_group_id); 
-    status        =  H5Gclose(group_id);
+    status        		 =  H5Dwrite(dset_id, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, dataset);
+    status        		 =  H5Dclose(dset_id);
+    status        		 =  H5Sclose(space_id);
+    status        		 =  H5Gclose(sub_group_id); 
+    status        		 =  H5Gclose(group_id);
     
     /* Clean up */
     glbFreeParams(true_values);
