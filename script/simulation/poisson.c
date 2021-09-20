@@ -675,21 +675,7 @@ int main(int argc, char *argv[]) {
     glbInitExperiment("./DUNE2021/DUNE_GLoBES.glb",&glb_experiment_list[0],&glb_num_of_exps);
     glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
 
-  	// 設定輸出檔案位置 
-/*
-	int len = strlen("/docker_workplace/two_delta_chi2_distribution_DUNE_angle") + strlen(argv[1])
-                            +strlen("/two_delta_chi2_distribution_DUNE_angle")
-                            + strlen(argv[1]) + strlen("_part") + strlen(argv[4]) + strlen(".dat") + 1;
-//    char path[len];
-    strcpy(path,"/docker_workplace/two_delta_chi2_distribution_DUNE_angle");
-    strcat(path, argv[3]);
-    strcat(path,"/two_delta_chi2_distribution_DUNE_angle");
-    strcat(path, argv[3]);
-    strcat(path, "_part");
-    strcat(path, argv[4]);
-    strcat(path, ".dat");
-*/
-    printf("%s\n",filename);
+    printf("File name: %s\n",filename);
     //FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
     FILE* OUT =  fopen(filename,"w");//建立輸出檔案
 
