@@ -107,16 +107,16 @@ int case_judger (int mode, double value) {
 			} else {
 				result = 1;
 			}
-		break;
-	case 2:
-		if (value > 45) {
-		    result = 1;
-		} else if (value == 45) {
-		    result = 0;
-		} else {
-		    result = -1;
-		}
-		break;
+			break;
+		case 2:
+			if (value > 45) {
+				result = 1;
+			} else if (value == 45) {
+				result = 0;
+			} else {
+				result = -1;
+			}
+			break;
 	case 3:
 		result = value > 0 ? 1 : -1;
 		break;
