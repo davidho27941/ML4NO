@@ -218,44 +218,50 @@ void do_poisson_fluctuation(glb_params test_values, int mode_expr, double* datas
 			num_bins, 
 			cumu_bins;
 	if (mode_expr == 0){
+		/* Deprecated
 		double *ve_dune      = glbGetRuleRatePtr(0, 0);
 		double *vebar_dune   = glbGetRuleRatePtr(0, 1);
 		double *vu_dune      = glbGetRuleRatePtr(0, 2);
 		double *vubar_dune   = glbGetRuleRatePtr(0, 3);    
-		
+		*/
+
 		num_channel = 4;
 		cumu_bins	= 0;
 		for (int channel = 0; channel < num_channel; channel++){
+			double *target = glbGetRuleRatePtr(mode_expr, channel);
 			glbGetEnergyWindowBins(mode_expr, channel, &ew_low, &ew_high);
-			num_bins = ew_hight - ew_low + 1;
+			num_bins = ew_high - ew_low + 1;
 			count_dpf = 0;
 			for (i=ew_low; i <= ew_high; i++) { 
-				*(dataset + cumu_bins + count_dpf) = random_poisson(ve_dune[i]);		
+				*(dataset + cumu_bins + count_dpf) = random_poisson(target[i]);		
 				count_dpf += 1;
 			}
 			cumu_bins += num_bins;
 			*(dset_info + channel) = num_bins;
 		}
 	} else if (mode_expr == 1){ 
+		/* Deprecated
 		double *ve_t2hk      = glbGetRuleRatePtr(1, 0);
 		double *vu_t2hk      = glbGetRuleRatePtr(1, 1);    
 		double *vebar_t2hk   = glbGetRuleRatePtr(1, 2);
 		double *vubar_t2hk   = glbGetRuleRatePtr(1, 3);	
-		
+		*/
 		num_channel = 4;
 		cumu_bins	= 0;
 		for (int channel = 0; channel < num_channel; channel++){
+			double *target = glbGetRuleRatePtr(mode_expr, channel);
 			glbGetEnergyWindowBins(mode_expr, channel, &ew_low, &ew_high);
-			num_bins = ew_hight - ew_low + 1;
+			num_bins = ew_high - ew_low + 1;
 			count_dpf = 0;
 			for (i=ew_low; i <= ew_high; i++) { 
-				*(dataset + cumu_bins + count_dpf) = random_poisson(ve_dune[i]);		
+				*(dataset + cumu_bins + count_dpf) = random_poisson(target[i]);		
 				count_dpf += 1;
 			}
 			cumu_bins += num_bins;
 			*(dset_info + channel) = num_bins;
 		}
 	} else if (mode_expr == -1) {
+		/* Deprecated
 		double *ve_dune      = glbGetRuleRatePtr(0, 0);
 		double *vebar_dune   = glbGetRuleRatePtr(0, 1);
 		double *vu_dune      = glbGetRuleRatePtr(0, 2);
@@ -264,18 +270,19 @@ void do_poisson_fluctuation(glb_params test_values, int mode_expr, double* datas
 		double *vu_t2hk      = glbGetRuleRatePtr(1, 1);    
 		double *vebar_t2hk   = glbGetRuleRatePtr(1, 2);
 		double *vubar_t2hk   = glbGetRuleRatePtr(1, 3);
-		
-		num_expr	= 2;
-		num_channel = 4;
-		cumu_bins	= 0;
+		*/
+		int num_expr	= 2;
+		num_channel 	= 4;
+		cumu_bins		= 0;
 		int expr;
 		for ( expr = 0; expr < num_expr; expr++) {
 			for (int channel = 0; channel < num_channel; channel++){
+				double *target = glbGetRuleRatePtr(expr, channel);
 				glbGetEnergyWindowBins(expr, channel, &ew_low, &ew_high);
-				num_bins = ew_hight - ew_low + 1;
+				num_bins = ew_high - ew_low + 1;
 				count_dpf = 0;
 				for (i=ew_low; i <= ew_high; i++) { 
-					*(dataset + cumu_bins + count_dpf) = random_poisson(ve_dune[i]);		
+					*(dataset + cumu_bins + count_dpf) = random_poisson(target[i]);		
 					count_dpf += 1;
 				}
 				cumu_bins += num_bins;
