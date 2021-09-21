@@ -214,73 +214,47 @@ void do_poisson_fluctuation(glb_params test_values, int mode_expr, double* datas
 			i, 
 			ladder = 0;
 	int    	count_dpf = 0;
-	
+	int 	num_channel,
+			num_bins, 
+			cumu_bins;
 	if (mode_expr == 0){
 		double *ve_dune      = glbGetRuleRatePtr(0, 0);
 		double *vebar_dune   = glbGetRuleRatePtr(0, 1);
 		double *vu_dune      = glbGetRuleRatePtr(0, 2);
 		double *vubar_dune   = glbGetRuleRatePtr(0, 3);    
-
-		glbGetEnergyWindowBins(0, 0, &ew_low, &ew_high);
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + count_dpf) = random_poisson(ve_dune[i]);		
-			count_dpf += 1;
+		
+		num_channel = 4;
+		cumu_bins	= 0;
+		for (int channel = 0; channel < num_channel; channel++){
+			glbGetEnergyWindowBins(mode_expr, channel, &ew_low, &ew_high);
+			num_bins = ew_hight - ew_low + 1;
+			count_dpf = 0;
+			for (i=ew_low; i <= ew_high; i++) { 
+				*(dataset + cumu_bins + count_dpf) = random_poisson(ve_dune[i]);		
+				count_dpf += 1;
+			}
+			cumu_bins += num_bins;
+			*(dset_info + channel) = num_bins;
 		}
-		*(dset_info) = 70;
-		glbGetEnergyWindowBins(0, 1, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + 70 + count_dpf) = random_poisson(vebar_dune[i]);		
-			count_dpf += 1;
-		}
-		*(dset_info+1) = 70;
-		glbGetEnergyWindowBins(0, 2, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + 70 + count_dpf) = random_poisson(vu_dune[i]);		
-			count_dpf += 1;
-		}
-		*(dset_info+2) = 70;
-		glbGetEnergyWindowBins(0, 3, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + 70 + count_dpf) = random_poisson(vubar_dune[i]);		
-			count_dpf += 1;
-		}
-		*(dset_info+3) = 70;
 	} else if (mode_expr == 1){ 
 		double *ve_t2hk      = glbGetRuleRatePtr(1, 0);
 		double *vu_t2hk      = glbGetRuleRatePtr(1, 1);    
 		double *vebar_t2hk   = glbGetRuleRatePtr(1, 2);
 		double *vubar_t2hk   = glbGetRuleRatePtr(1, 3);	
-			
-		glbGetEnergyWindowBins(1, 0, &ew_low, &ew_high);
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + count_dpf) = random_poisson(ve_t2hk[i]);		
-			count_dpf += 1;
+		
+		num_channel = 4;
+		cumu_bins	= 0;
+		for (int channel = 0; channel < num_channel; channel++){
+			glbGetEnergyWindowBins(mode_expr, channel, &ew_low, &ew_high);
+			num_bins = ew_hight - ew_low + 1;
+			count_dpf = 0;
+			for (i=ew_low; i <= ew_high; i++) { 
+				*(dataset + cumu_bins + count_dpf) = random_poisson(ve_dune[i]);		
+				count_dpf += 1;
+			}
+			cumu_bins += num_bins;
+			*(dset_info + channel) = num_bins;
 		}
-		*(dset_info) = 8;
-		glbGetEnergyWindowBins(1, 1, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + 8 + count_dpf) = random_poisson(vu_t2hk[i]);		
-			count_dpf += 1;
-		}
-		*(dset_info+1) = 12;
-		glbGetEnergyWindowBins(1, 2, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + 20 + count_dpf) = random_poisson(vebar_t2hk[i]);		
-			count_dpf += 1;
-		}
-		*(dset_info+2) = 8;
-		glbGetEnergyWindowBins(1, 3, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) { 
-			*(dataset + 28 + count_dpf) = random_poisson(vubar_t2hk[i]);		
-			count_dpf += 1;
-		}
-		*(dset_info+3) = 12;
 	} else if (mode_expr == -1) {
 		double *ve_dune      = glbGetRuleRatePtr(0, 0);
 		double *vebar_dune   = glbGetRuleRatePtr(0, 1);
@@ -290,62 +264,24 @@ void do_poisson_fluctuation(glb_params test_values, int mode_expr, double* datas
 		double *vu_t2hk      = glbGetRuleRatePtr(1, 1);    
 		double *vebar_t2hk   = glbGetRuleRatePtr(1, 2);
 		double *vubar_t2hk   = glbGetRuleRatePtr(1, 3);
-			
-		glbGetEnergyWindowBins(0, 0, &ew_low, &ew_high);
-		for (i=ew_low; i <= ew_high; i++) {
-			*(dataset + count_dpf) = random_poisson(ve_dune[i]);
-			count_dpf += 1;
+		
+		num_expr	= 2;
+		num_channel = 4;
+		cumu_bins	= 0;
+		int expr;
+		for ( expr = 0; expr < num_expr; expr++) {
+			for (int channel = 0; channel < num_channel; channel++){
+				glbGetEnergyWindowBins(expr, channel, &ew_low, &ew_high);
+				num_bins = ew_hight - ew_low + 1;
+				count_dpf = 0;
+				for (i=ew_low; i <= ew_high; i++) { 
+					*(dataset + cumu_bins + count_dpf) = random_poisson(ve_dune[i]);		
+					count_dpf += 1;
+				}
+				cumu_bins += num_bins;
+				*(dset_info + channel) = num_bins;
+			}
 		}
-		*(dset_info) = 70;
-		glbGetEnergyWindowBins(0, 1, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) {
-			*(dataset + 70 + count_dpf) = random_poisson(vebar_dune[i]);
-			count_dpf += 1;
-		}
-		*(dset_info+1) = 70;
-		glbGetEnergyWindowBins(0, 2, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) {
-		    *(dataset + 70 + count_dpf) = random_poisson(vu_dune[i]);
-		    count_dpf += 1;
-		}
-		*(dset_info+2) = 70;
-		glbGetEnergyWindowBins(0, 3, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) {
-		    *(dataset + 70 + count_dpf) = random_poisson(vubar_dune[i]);
-		    count_dpf += 1;
-		}
-		*(dset_info+3) = 70;
-		glbGetEnergyWindowBins(1, 0, &ew_low, &ew_high);
-		int count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) {
-		    *(dataset + count_dpf) = random_poisson(ve_t2hk[i]);
-		    count_dpf += 1;
-		}
-		*(dset_info+4) = 8;
-		glbGetEnergyWindowBins(1, 1, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) {
-		    *(dataset + 8 + count_dpf) = random_poisson(vu_t2hk[i]);
-		    count_dpf += 1;
-		}
-		*(dset_info+5) = 8;
-		glbGetEnergyWindowBins(1, 2, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) {
-		    *(dataset + 16 + count_dpf) = random_poisson(vebar_t2hk[i]);
-		    count_dpf += 1;
-		}
-		*(dset_info+6) = 12;
-		glbGetEnergyWindowBins(1, 3, &ew_low, &ew_high);
-		count_dpf = 0;
-		for (i=ew_low; i <= ew_high; i++) {
-		    *(dataset + 28 + count_dpf) = random_poisson(vubar_t2hk[i]);
-		    count_dpf += 1;
-		}
-		*(dset_info+7) = 12;
 	} else {
 		printf("Please inpuit a correct experiment protocol.");
 	}
@@ -683,7 +619,7 @@ int main(int argc, char *argv[]) {
 		Q0[num_simulatiom][3] = q0;
 
 		q1 = delta_chi2(1 , 1, angle, expr);
-		Q1[num_simulatiom][0] = q1;
+		Q1[num_simulatiom] = q1;
 	}
 
 	file_id   	= 	H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
