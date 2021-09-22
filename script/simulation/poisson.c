@@ -308,9 +308,9 @@ double chi2_poisson(int exp, int rule, int np, double *x, double *errors, void* 
 			index, 
 			pos, 
 			count_cp;
-	int 	data_info_dune[4] = { 70, 70, 70, 70}; /* {(y_axis_length)} */
+	int 	data_info_dune[4] = { 66, 66, 66, 66}; /* {(y_axis_length)} */
 	int 	data_info_t2hk[4] = { 8, 12, 8, 12};
-	int 	data_info_all[8] = { 70, 70, 70, 70, 8, 12, 8, 12};
+	int 	data_info_all[8] = { 66, 66, 66, 66, 8, 12, 8, 12};
 	
 	switch (exp) {
 		case 0:
@@ -353,9 +353,9 @@ double delta_chi2 (int CP, int MO, double deltacp, int EXP) {
 			chi_cpv_NO, 
 			chi_cpv_IO;
 
-	int data_info_dune[6] = {4, 280, 70, 70, 70, 70}; /* {(y_axis_length)} */
+	int data_info_dune[6] = {4, 264, 66, 66, 66, 66}; /* {(y_axis_length)} */
 	int data_info_t2hk[6] = {4, 40, 8, 12, 8, 12};
-	int data_info_all[10] = {8, 320, 70, 70, 70, 70, 8, 12, 8, 12};
+	int data_info_all[10] = {8, 304, 66, 66, 66, 66, 8, 12, 8, 12};
 	double *darray;
 	int sum_y  = 0,
 		ladder = 0,
