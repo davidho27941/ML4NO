@@ -231,8 +231,8 @@ int main(int argc, char *argv[]) {
 	status        =  H5Gclose(group_id);
 	 
 	double     dataset[TOTALsample][9], 
-			   TRUE_RATE[TOTALsample][2][4][8],
-			   TRUE_RATE_PRIME[2][4][8][TOTALsample];
+			   TRUE_RATE[TOTALsample][2][4][66],
+			   TRUE_RATE_PRIME[2][4][TOTALsample][66];
 	for (num_simulatiom=0;num_simulatiom<TOTALsample;num_simulatiom++){
 
 		// double theta12 = TCRandom (theta12_c, delta_12 ); 
@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	 	double tmp_array[9] = {theta12_c, theta13, theta23, deltacp, sdm_c, ldm, octant, cpv, mo};
-		int  count = 0;
+		int count = 0;
 		for ( count = 0; count < 9; count++){
 			dataset[num_simulatiom][count] = tmp_array[count];
 		}
@@ -294,8 +294,8 @@ int main(int argc, char *argv[]) {
 	for ( i = 0; i < TOTALsample; i++){
 		for ( j = 0; j < 2; j++){
 			for ( k = 0; k < 4; k++){
-				for ( l = 0; l < 8; l++){
-			   		TRUE_RATE_PRIME[j][k][l][i] = TRUE_RATE[i][j][k][l];
+				for ( l = 0; l < 66; l++){
+			   		TRUE_RATE_PRIME[j][k][i][l] = TRUE_RATE[i][j][k][l];
 			   	}
 			}
 		}
@@ -305,15 +305,30 @@ int main(int argc, char *argv[]) {
 		 	expr_spec_true_name[]    = "/Parameter/true/expr_0\0", 
 		 	expr_spec_sim_name[]     = "/Parameter/simulation\0";
     
-	hsize_t dims_s[2]    =  {TOTALsample, 8};
+	hsize_t dims_s[2];
 	group_id     		 =  H5Gcreate(file_id, "/Parameter", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 	sub_group_id 		 =  H5Gcreate(file_id, "/Parameter/true/", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 	for ( i = 0; i < 2; i ++){
 		expr_spec_true_name[21] = i+'0';
 		sub2_group_id =  H5Gcreate(file_id, expr_spec_true_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 		for ( j = 0; j < 4; j++){
+			int tmp_length;
+			int mod;
+			int test_count;
+			switch (i) {
+				case 0:
+					tmp_length = 66;
+					break;
+				case 1:
+					mod = j % 2;
+					tmp_length = (mod == 0) ? 8 : 12;
+					break;
+			}
+			dims_s[0] 	= TOTALsample;
+			dims_s[1] 	= tmp_length;
 			channel_spec_true_name[21] = i+'0';
 			channel_spec_true_name[31] = j+'0';
+
 			space_id      =  H5Screate_simple(2, dims_s, NULL);
 			dset_id       =  H5Dcreate(sub2_group_id, channel_spec_true_name, H5T_NATIVE_DOUBLE, space_id, H5P_DEFAULT, H5P_DEFAULT,
 				                H5P_DEFAULT);
