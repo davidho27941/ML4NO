@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
 	char 	filename[32],
 	 	 	Group_name[32],
 		 	channel_info_dset_name[] = "/Spectrum/expr_0/channel_0\0",
-		 	size_info_dset_name[] = "/Spectrum/expr_0/channel_0/Bin_ize\0",
+		 	size_info_dset_name[] = "/Spectrum/expr_0/channel_0/Bin_size\0",
 		 	energy_info_dset_name[] = "/Spectrum/expr_0/channel_0/Bin_energy\0",
 		 	expr_info_dset_name[] = "/Spectrum/expr_0\0";
 	strcpy(filename, argv[1]);
