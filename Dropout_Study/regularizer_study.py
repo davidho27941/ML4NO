@@ -56,34 +56,32 @@ try:
     """
     experiment = str(sys.argv[1])
     physics_parameter = str(sys.argv[2])
-    dropout_rate = float(sys.argv[3])/10.
+    regular_l1 = float(sys.argv[3])/10.
 
     
     logging.info("experiment: {}".format(experiment))
     logging.info("physics parameter: {}".format(physics_parameter))
-    logging.info("dropuot rate: {}".format(dropout_rate))
+    logging.info("regular_l1 : {}".format(regular_l1))
 
 except:
     print("********* Please Check Input Argunment *********")
-    print("********* Usage: python3 dropout_study.py experiment physics_parameter dropout_rate *********")
+    print("********* Usage: python3 regularizer_study.py experiment physics_parameter regular_l1 *********")
     sys.exit(1)
 
 """
 Define Model
 """
 
-def Regression_Model(name, num_of_bins, dropout_rate):
+
+def Regression_Model(name, num_of_bins, regular_l1):
 
     input_shape = (num_of_bins,)
     model = Sequential(name = "Regression_Model_for_" + str(name))
-#     model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
+    model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
     model.add(keras.Input(shape=input_shape, name = 'input'))
-    model.add(Dense(512, activation='relu', name = 'dense_1'))
-    model.add(Dropout(dropout_rate))
-    model.add(Dense(512, activation='relu', name = 'dense_2'))
-    model.add(Dropout(dropout_rate))
-    model.add(Dense(1024, activation='relu', name = 'dense_3'))
-    model.add(Dropout(dropout_rate))
+    model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l1(regular_l1),  name = 'dense_1'))
+    model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l1(regular_l1), name = 'dense_2'))
+    model.add(Dense(1024, activation='relu', kernel_regularizer=regularizers.l1(regular_l1), name = 'dense_3'))
     model.add(Dense(1, activation='relu', name = physics_parameter))
     
 #     model_opt = keras.optimizers.Adadelta()
@@ -145,7 +143,7 @@ logging.info("# of test : {}".format(len(x_test)))
 """
 Create Model
 """
-model = Regression_Model(physics_parameter, x_train.shape[1], dropout_rate)
+model = Regression_Model(physics_parameter, x_train.shape[1], regular_l1)
 model.summary()
 
 
@@ -156,7 +154,7 @@ Model Training
 check_list=[]
 csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
-                       str(int(dropout_rate*10)) + "_" + 
+                       str(int(regular_l1*10)) + "_" + 
                        "training_log_standardized.csv")
 
 
@@ -174,7 +172,7 @@ model.fit(x_train, y_train,
 
 model.save("./Model/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
-                       str(int(dropout_rate*10)) + 
+                       str(int(regular_l1*10)) + 
                        "_standardized.h5")
 
 
