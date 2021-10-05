@@ -77,8 +77,8 @@ def Regression_Model(name, num_of_bins, regular_l1):
 
     input_shape = (num_of_bins,)
     model = Sequential(name = "Regression_Model_for_" + str(name))
-    model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
-#     model.add(keras.Input(shape=input_shape, name = 'input'))
+#     model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
+    model.add(keras.Input(shape=input_shape, name = 'input'))
     model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l1(regular_l1),  name = 'dense_1'))
     model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l1(regular_l1), name = 'dense_2'))
     model.add(Dense(1024, activation='relu', kernel_regularizer=regularizers.l1(regular_l1), name = 'dense_3'))
@@ -111,18 +111,18 @@ Stack Data
 data_all = np.column_stack([training_data["ve_"+str(experiment)], training_data["vu_"+str(experiment)], training_data["vebar_"+str(experiment)], training_data["vubar_"+str(experiment)]])
 
 
-# """
-# Standardization
-# """
-# scaler = StandardScaler()
-# scaler.fit(data_all)
-# data_all = scaler.transform(data_all)
+"""
+Standardization
+"""
+scaler = StandardScaler()
+scaler.fit(data_all)
+data_all = scaler.transform(data_all)
 
-# file_path = "/dicos_ui_home/alanchung/ML4NO/Standardization.h5"
-# if not os.path.isfile(file_path):
-#     dump(scaler, file_path)
-# else:
-#     pass
+file_path = "/dicos_ui_home/alanchung/ML4NO/Standardization.h5"
+if not os.path.isfile(file_path):
+    dump(scaler, file_path)
+else:
+    pass
 
 
 
@@ -155,7 +155,7 @@ check_list=[]
 csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str(int(regular_l1*10)) + "_" + 
-                       "training_log_regularizer.csv")
+                       "training_log_regularizer_standardized.csv")
 
 
 check_list.append(csv_logger)
@@ -173,7 +173,7 @@ model.fit(x_train, y_train,
 model.save("./Model/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str(int(regular_l1*10)) + 
-                       "_regularizer.h5")
+                       "_regularizer_standardized.h5")
 
 
 #######################################################
