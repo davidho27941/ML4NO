@@ -48,11 +48,11 @@ logging.info("\n")
 
 
 start = time.time()
-#######################################################
+##############################################################################################################
 if len(sys.argv) != 3:
     logging.info("********* Please Check Input Argunment *********")
-    logging.info("********* Usage: python3 poission_learning_study.py experiment physics_parameter  *********")
-    raise ValueError("********* Usage: python3 poission_learning_study.py experiment physics_parameter  *********")
+    logging.info("********* Usage: python3 poission_learning_study_v1.py experiment physics_parameter  *********")
+    raise ValueError("********* Usage: python3 poission_learning_study_v1.py experiment physics_parameter  *********")
     
 
 try:
@@ -69,14 +69,13 @@ try:
 
 except:
     print("********* Please Check Input Argunment *********")
-    print("********* Usage: python3 poission_learning_study.py experiment physics_parameter *********")
+    print("********* Usage: python3 poission_learning_study_v1.py experiment physics_parameter *********")
     sys.exit(1)
 
 """
 Define Model
 """
-
-
+#======================================================#
 def Regression_Model(name, num_of_bins):
 
     input_shape = (num_of_bins,)
@@ -102,21 +101,22 @@ def Regression_Model(name, num_of_bins):
                        metrics=["mse"])
     
     return model
+#======================================================#
 
 
 
 """
 Load Data
 """
-
+#======================================================#
 training_data = np.load("../Data/n1000000_0910_all_flat.npz")
-
+#======================================================#
 
 
 """
 Stack Data
 """
-
+#======================================================#
 data_all = np.column_stack([training_data["ve_"+str(experiment)], training_data["vu_"+str(experiment)], training_data["vebar_"+str(experiment)], training_data["vubar_"+str(experiment)]])
 
 
@@ -148,22 +148,24 @@ y_test = target[900000:]
 
 logging.info("# of train: {}".format(len(x_train)))
 logging.info("# of test : {}".format(len(x_test)))
-
+#======================================================#
 
 
 """
 Create Model
 """
+#======================================================#
 model = Regression_Model(physics_parameter, x_train.shape[1])
 model.summary()
-
+#======================================================#
 
 
 """
 Model Training (Asimov)
 """
+#======================================================#
 check_list=[]
-csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
+csv_logger = CSVLogger("./Training_loss_v1/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" +
                        "training_log_poisson_0" + ".csv")
 
@@ -183,16 +185,21 @@ model.fit(x_train, y_train,
 model.save("./Model_v1/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" +
                        "poisson_0" + ".h5")
-
+#======================================================#
 
 
 """
 Model Training (Poisson Noise)
 """
+#======================================================#
 for i in tqdm(range(40)):
     time.sleep(0.5)
     
     
+    """
+    Trained on Asimov
+    """
+    #++++++++++++++++++++++++++++++++++++++++++#
     if i != 0:
         logging.info("# of training: {}".format(i))
         logging.info("Trained on Asimov")
@@ -215,7 +222,14 @@ for i in tqdm(range(40)):
 
     else:
         pass
+    #++++++++++++++++++++++++++++++++++++++++++#
+    
 
+    
+    """
+    Trained on Poisson Noise
+    """
+    #++++++++++++++++++++++++++++++++++++++++++#
     logging.info("# of training: {}".format(i))
     logging.info("Add Poisson Noise")
     logging.info("=====START=====")
@@ -238,7 +252,7 @@ for i in tqdm(range(40)):
     Model Training
     """
     check_list=[]
-    csv_logger = CSVLogger("./Training_loss_v2/" + str(experiment) + "_" + 
+    csv_logger = CSVLogger("./Training_loss_v1/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
                            "training_log_poisson_" +str(i+1)+ ".csv")
 
@@ -258,10 +272,13 @@ for i in tqdm(range(40)):
     model.save("./Model_v1/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
                            "poisson_" + str(i+1)+ ".h5")
+    #++++++++++++++++++++++++++++++++++++++++++#
+    
+#======================================================#
 
     
 
-#######################################################
+##############################################################################################################
 finish = time.time()
 
 totaltime =  finish - start

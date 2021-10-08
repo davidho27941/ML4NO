@@ -48,11 +48,11 @@ logging.info("\n")
 
 
 start = time.time()
-#######################################################
+##############################################################################################################
 if len(sys.argv) != 3:
     logging.info("********* Please Check Input Argunment *********")
-    logging.info("********* Usage: python3 poission_learning_study.py experiment physics_parameter  *********")
-    raise ValueError("********* Usage: python3 poission_learning_study.py experiment physics_parameter  *********")
+    logging.info("********* Usage: python3 poission_learning_study_v2.py experiment physics_parameter  *********")
+    raise ValueError("********* Usage: python3 poission_learning_study_v2.py experiment physics_parameter  *********")
     
 
 try:
@@ -69,14 +69,15 @@ try:
 
 except:
     print("********* Please Check Input Argunment *********")
-    print("********* Usage: python3 poission_learning_study.py experiment physics_parameter *********")
+    print("********* Usage: python3 poission_learning_study_v2.py experiment physics_parameter *********")
     sys.exit(1)
+    
+    
 
 """
 Define Model
 """
-
-
+#======================================================#
 def Regression_Model(name, num_of_bins):
 
     input_shape = (num_of_bins,)
@@ -102,21 +103,23 @@ def Regression_Model(name, num_of_bins):
                        metrics=["mse"])
     
     return model
+#======================================================#
+
 
 
 
 """
 Load Data
 """
-
+#======================================================#
 training_data = np.load("../Data/n1000000_0910_all_flat.npz")
-
+#======================================================#
 
 
 """
 Stack Data
 """
-
+#======================================================#
 data_all = np.column_stack([training_data["ve_"+str(experiment)], training_data["vu_"+str(experiment)], training_data["vebar_"+str(experiment)], training_data["vubar_"+str(experiment)]])
 
 
@@ -148,15 +151,17 @@ y_test = target[900000:]
 
 logging.info("# of train: {}".format(len(x_train)))
 logging.info("# of test : {}".format(len(x_test)))
+#======================================================#
 
 
 
 """
 Create Model
 """
+#======================================================#
 model = Regression_Model(physics_parameter, x_train.shape[1])
 model.summary()
-
+#======================================================#
 
 
 
@@ -165,6 +170,7 @@ model.summary()
 """
 Model Training (Poisson Noise)
 """
+#======================================================#
 for i in tqdm(range(40)):
     time.sleep(0.5)
 
@@ -211,10 +217,10 @@ for i in tqdm(range(40)):
     model.save("./Model_v2/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
                            "poisson_" + str(i)+ ".h5")
-
+#======================================================#
     
 
-#######################################################
+##############################################################################################################
 finish = time.time()
 
 totaltime =  finish - start
