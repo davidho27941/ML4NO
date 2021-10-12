@@ -51,8 +51,8 @@ start = time.time()
 ##############################################################################################################
 if len(sys.argv) != 3:
     logging.info("********* Please Check Input Argunment *********")
-    logging.info("********* Usage: python3 poission_learning_study_v1.py experiment physics_parameter  *********")
-    raise ValueError("********* Usage: python3 poission_learning_study_v1.py experiment physics_parameter  *********")
+    logging.info("********* Usage: python3 poisson_learning_study_v2_to_5GeV.py experiment physics_parameter  *********")
+    raise ValueError("********* Usage: python3 poisson_learning_study_v2_to_5GeV.py experiment physics_parameter  *********")
     
 
 try:
@@ -69,8 +69,10 @@ try:
 
 except:
     print("********* Please Check Input Argunment *********")
-    print("********* Usage: python3 poission_learning_study_v1.py experiment physics_parameter *********")
+    print("********* Usage: python3 poisson_learning_study_v2_to_5GeV.py experiment physics_parameter *********")
     sys.exit(1)
+    
+    
 
 """
 Define Model
@@ -105,6 +107,7 @@ def Regression_Model(name, num_of_bins):
 
 
 
+
 """
 Load Data
 """
@@ -117,7 +120,7 @@ training_data = np.load("../Data/n1000000_0910_all_flat.npz")
 Stack Data
 """
 #======================================================#
-data_all = np.column_stack([training_data["ve_"+str(experiment)], training_data["vu_"+str(experiment)], training_data["vebar_"+str(experiment)], training_data["vubar_"+str(experiment)]])
+data_all = np.column_stack([training_data["ve_"+str(experiment)][:,:36], training_data["vu_"+str(experiment)][:,:36], training_data["vebar_"+str(experiment)][:,:36], training_data["vubar_"+str(experiment)][:,:36]])
 
 
 
@@ -151,6 +154,7 @@ logging.info("# of test : {}".format(len(x_test)))
 #======================================================#
 
 
+
 """
 Create Model
 """
@@ -160,32 +164,7 @@ model.summary()
 #======================================================#
 
 
-"""
-Model Training (Asimov)
-"""
-#======================================================#
-check_list=[]
-csv_logger = CSVLogger("./Training_loss_v1/" + str(experiment) + "_" + 
-                       str(physics_parameter) + "_" +
-                       "training_log_poisson_0" + ".csv")
 
-
-check_list.append(csv_logger)
-
-
-model.fit(x_train, y_train,
-           validation_split = 0.1,
-           batch_size=64,
-           epochs=20,
-           verbose=1,
-           shuffle = True,
-           callbacks=check_list
-         )
-
-model.save("./Model_v1/" + str(experiment) + "_" + 
-                       str(physics_parameter) + "_" +
-                       "poisson_0" + ".h5")
-#======================================================#
 
 
 """
@@ -194,42 +173,8 @@ Model Training (Poisson Noise)
 #======================================================#
 for i in tqdm(range(40)):
     time.sleep(0.5)
-    
-    
-    """
-    Trained on Asimov
-    """
-    #++++++++++++++++++++++++++++++++++++++++++#
-    if i != 0:
-        logging.info("# of training: {}".format(i))
-        logging.info("Trained on Asimov")
-        logging.info("=====START=====")
-        t1_time = time.time()
-        time.sleep(0.5)
-        
-        model.fit(x_train, y_train,
-               validation_split = 0.1,
-               batch_size=64,
-               epochs=5,
-               verbose=1,
-               shuffle = True
-               )
-        
-        t2_time = time.time()
-        logging.info("\033[3;33m Time Cost for this Step : {:.4f} min\033[0;m".format((t2_time-t1_time)/60.))
-        logging.info("=====Finish=====")
-        logging.info("\n")
 
-    else:
-        pass
-    #++++++++++++++++++++++++++++++++++++++++++#
-    
 
-    
-    """
-    Trained on Poisson Noise
-    """
-    #++++++++++++++++++++++++++++++++++++++++++#
     logging.info("# of training: {}".format(i))
     logging.info("Add Poisson Noise")
     logging.info("=====START=====")
@@ -252,9 +197,9 @@ for i in tqdm(range(40)):
     Model Training
     """
     check_list=[]
-    csv_logger = CSVLogger("./Training_loss_v1/" + str(experiment) + "_" + 
+    csv_logger = CSVLogger("./Training_loss_v2_to_5GeV/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
-                           "training_log_poisson_" +str(i+1)+ ".csv")
+                           "training_log_poisson_" +str(i)+ ".csv")
 
 
     check_list.append(csv_logger)
@@ -269,13 +214,10 @@ for i in tqdm(range(40)):
                callbacks=check_list
              )
 
-    model.save("./Model_v1/" + str(experiment) + "_" + 
+    model.save("./Model_v2_to_5GeV/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
-                           "poisson_" + str(i+1)+ ".h5")
-    #++++++++++++++++++++++++++++++++++++++++++#
-    
+                           "poisson_" + str(i)+ ".h5")
 #======================================================#
-
     
 
 ##############################################################################################################

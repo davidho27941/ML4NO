@@ -51,8 +51,8 @@ start = time.time()
 ##############################################################################################################
 if len(sys.argv) != 3:
     logging.info("********* Please Check Input Argunment *********")
-    logging.info("********* Usage: python3 poission_learning_study_v2.py experiment physics_parameter  *********")
-    raise ValueError("********* Usage: python3 poission_learning_study_v2.py experiment physics_parameter  *********")
+    logging.info("********* Usage: python3 poisson_learning_study_v2_full_energy.py experiment physics_parameter  *********")
+    raise ValueError("********* Usage: python3 poisson_learning_study_v2_full_energy.py experiment physics_parameter  *********")
     
 
 try:
@@ -69,7 +69,7 @@ try:
 
 except:
     print("********* Please Check Input Argunment *********")
-    print("********* Usage: python3 poission_learning_study_v2.py experiment physics_parameter *********")
+    print("********* Usage: python3 poisson_learning_study_v2_full_energy.py experiment physics_parameter *********")
     sys.exit(1)
     
     
@@ -197,7 +197,7 @@ for i in tqdm(range(40)):
     Model Training
     """
     check_list=[]
-    csv_logger = CSVLogger("./Training_loss_v2/" + str(experiment) + "_" + 
+    csv_logger = CSVLogger("./Training_loss_v2_full_energy/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
                            "training_log_poisson_" +str(i)+ ".csv")
 
@@ -214,7 +214,7 @@ for i in tqdm(range(40)):
                callbacks=check_list
              )
 
-    model.save("./Model_v2/" + str(experiment) + "_" + 
+    model.save("./Model_v2_full_energy/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
                            "poisson_" + str(i)+ ".h5")
 #======================================================#
