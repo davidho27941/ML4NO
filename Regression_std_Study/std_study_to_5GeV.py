@@ -116,7 +116,7 @@ training_data = np.load("../Data/n1000000_0910_all_flat.npz")
 Stack Data
 """
 #======================================================#
-data_all = np.column_stack([training_data["ve_"+str(experiment)], training_data["vu_"+str(experiment)], training_data["vebar_"+str(experiment)], training_data["vubar_"+str(experiment)]])
+data_all = np.column_stack([training_data["ve_"+str(experiment)][:,:36], training_data["vu_"+str(experiment)][:,:36], training_data["vebar_"+str(experiment)][:,:36], training_data["vubar_"+str(experiment)][:,:36]])
 
 
 target = training_data[physics_parameter]
@@ -153,14 +153,14 @@ Model Training (Asimov Data)
 #======================================================#
 check_list=[]
 checkpoint = ModelCheckpoint(
-            filepath="./Model/" + str(experiment) + "_" + 
+            filepath="./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + "_" + 
                        "checkpoint.h5",
             save_best_only=True,
             verbose=1)
 
-csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
+csv_logger = CSVLogger("./Training_loss_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + "_" + 
                        "training_log.csv")
@@ -177,7 +177,7 @@ model.fit(x_train, y_train,
            callbacks=check_list
          )
 
-model.save("./Model/" + str(experiment) + "_" + 
+model.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + 
                        ".h5")
@@ -205,14 +205,14 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
     
     check_list=[]
     checkpoint = ModelCheckpoint(
-                filepath="./Model/" + str(experiment) + "_" + 
+                filepath="./Model_to_5Gev/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" + 
                            "std_" + str(n_std) + "_" + 
                            "checkpoint.h5",
                 save_best_only=True,
                 verbose=1)
 
-    csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
+    csv_logger = CSVLogger("./Training_loss_to_5Gev/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" + 
                            "std_" + str(n_std) + "_" + 
                            "training_log.csv")
@@ -233,7 +233,7 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
     after_train_loss.append(model.evaluate(x_test_gen, y_test)[0])
 
     
-    model.save("./Model/" + str(experiment) + "_" + 
+    model.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        "std_" + str(n_std) + "_" + 
                        ".h5")
@@ -279,7 +279,7 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
     logging.info("=====START=====")
     time.sleep(0.5)
     
-    model_learning_poisson.save("./Model/" + str(experiment) + "_" + 
+    model_learning_poisson.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        "std_" + str(n_std) + "_poisson_10_" + 
                        ".h5")
