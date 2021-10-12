@@ -76,8 +76,8 @@ def Regression_Model(name, num_of_bins, dropout_rate):
 
     input_shape = (num_of_bins,)
     model = Sequential(name = "Regression_Model_for_" + str(name))
-#     model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
-    model.add(keras.Input(shape=input_shape, name = 'input'))
+    model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
+#     model.add(keras.Input(shape=input_shape, name = 'input'))
     model.add(Dense(512, activation='relu', name = 'dense_1'))
     model.add(Dropout(dropout_rate))
     model.add(Dense(512, activation='relu', name = 'dense_2'))
@@ -113,20 +113,6 @@ Stack Data
 data_all = np.column_stack([training_data["ve_"+str(experiment)], training_data["vu_"+str(experiment)], training_data["vebar_"+str(experiment)], training_data["vubar_"+str(experiment)]])
 
 
-"""
-Standardization
-"""
-scaler = StandardScaler()
-scaler.fit(data_all)
-data_all = scaler.transform(data_all)
-
-file_path = "/dicos_ui_home/alanchung/ML4NO/Standardization.h5"
-if not os.path.isfile(file_path):
-    dump(scaler, file_path)
-else:
-    pass
-
-
 
 target = training_data[physics_parameter]
 
@@ -157,7 +143,7 @@ check_list=[]
 csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str(int(dropout_rate*10)) + "_" + 
-                       "training_log_standardized.csv")
+                       "training_log_dropout.csv")
 
 
 check_list.append(csv_logger)
@@ -175,7 +161,7 @@ model.fit(x_train, y_train,
 model.save("./Model/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str(int(dropout_rate*10)) + 
-                       "_standardized.h5")
+                       "_dropout.h5")
 
 
 #######################################################
