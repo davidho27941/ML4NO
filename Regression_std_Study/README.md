@@ -1,5 +1,5 @@
 # Regression std Study
-Aim to study the detail of gradual learning. 
+Aim to study the detail of gradual learning.   
 Currently, we facus on the DUNE experiment.
 
 ---
@@ -54,7 +54,7 @@ python3 std_study_full_energy.py dune delta
 ## Results:
 All results are in corresponding notebooks.
 
-e.g. 
+e.g.   
 The result of `std_study_full_energy.py` is in `contour_full_energy.ipynb`.
 
 
