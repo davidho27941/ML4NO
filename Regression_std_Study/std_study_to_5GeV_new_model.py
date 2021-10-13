@@ -83,6 +83,7 @@ if physics_parameter == "theta23":
 
     def Regression_Model(name, num_of_bins):
 
+        # input: nu_e, nu_mu, nu_ebar, nu_mubar
         input_shape = (num_of_bins,)
         model = Sequential(name = "Regression_Model_for_" + str(name))
         model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
@@ -127,12 +128,13 @@ elif physics_parameter == "delta":
 
     def Regression_Model(name, num_of_bins, num_of_bins_diff):
 
+        # input: nu_e, nu_mu, nu_ebar, nu_mubar
         input_shape = (num_of_bins,)
         model_all = Sequential(name = "Regression_Model_for_" + str(name))
         model_all.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization_all'))
         model_all.add(Dense(256, activation='relu', name = 'dense_1_all'))
 
-
+        # input: (nu_e - nu_ebar), (nu_mu-nu_mubar)
         input_shape_diff = (num_of_bins_diff,)
         model_diff = Sequential(name = "Regression_Model_for_" + str(name) + "_nu_nu_bar_different")
         model_diff.add(BatchNormalization(input_shape=input_shape_diff, name = 'BatchNormalization_diff'))
