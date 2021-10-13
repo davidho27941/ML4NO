@@ -78,26 +78,58 @@ except:
 Define Model
 """
 #======================================================#
-def Regression_Model(name, num_of_bins):
 
-    input_shape = (num_of_bins,)
-    model = Sequential(name = "Regression_Model_for_" + str(name))
-    model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
-    model.add(Dense(512, activation='relu', name = 'dense_1'))
-    model.add(Dense(512, activation='relu', name = 'dense_2'))
-    model.add(Dense(1024, activation='relu', name = 'dense_3'))
-    model.add(Dense(1, activation='relu', name = physics_parameter))
+if physics_parameter == "theta23":
+
+    def Regression_Model(name, num_of_bins):
+
+        input_shape = (num_of_bins,)
+        model = Sequential(name = "Regression_Model_for_" + str(name))
+        model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
+        model.add(Dense(512, activation='relu', name = 'dense_1'))
+        model.add(Dense(512, activation='relu', name = 'dense_2'))
+        model.add(Dense(1024, activation='relu', name = 'dense_3'))
+        model.add(Dense(1, activation='relu', name = physics_parameter))
+
+
+    #     model_opt = keras.optimizers.Adadelta()
+        model_opt = keras.optimizers.Adam()
+
+
+        model.compile(loss="mean_squared_error",
+                           optimizer=model_opt,
+                           metrics=["mse"])
+
+        return model
     
+elif physics_parameter == "delta":
     
-#     model_opt = keras.optimizers.Adadelta()
-    model_opt = keras.optimizers.Adam()
+    def Regression_Model(name, num_of_bins):
+
+        input_shape = (num_of_bins,)
+        model = Sequential(name = "Regression_Model_for_" + str(name))
+        model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
+        model.add(Dense(256, activation='relu', name = 'dense_1'))
+        model.add(Dense(128, activation='relu', name = 'dense_2'))
+        model.add(Dense(128, activation='relu', name = 'dense_3'))
+        model.add(Dense(1, activation='relu', name = physics_parameter))
+
+
+    #     model_opt = keras.optimizers.Adadelta()
+        model_opt = keras.optimizers.Adam()
+
+
+        model.compile(loss="mean_squared_error",
+                           optimizer=model_opt,
+                           metrics=["mse"])
+
+        return model
     
+
+else:
+    pass
     
-    model.compile(loss="mean_squared_error",
-                       optimizer=model_opt,
-                       metrics=["mse"])
-    
-    return model
+
 #======================================================#
 
 
@@ -156,14 +188,14 @@ checkpoint = ModelCheckpoint(
             filepath="./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + "_" + 
-                       "checkpoint.h5",
+                       "checkpoint_2.h5",
             save_best_only=True,
             verbose=1)
 
 csv_logger = CSVLogger("./Training_loss_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + "_" + 
-                       "training_log.csv")
+                       "training_log_2.csv")
 
 check_list.append(csv_logger)
 check_list.append(checkpoint)
@@ -180,7 +212,7 @@ model.fit(x_train, y_train,
 model.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + 
-                       ".h5")
+                       "_2.h5")
 #======================================================#
 
 
@@ -208,14 +240,14 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
                 filepath="./Model_to_5Gev/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" + 
                            "std_" + str(n_std) + "_" + 
-                           "checkpoint.h5",
+                           "checkpoint_2.h5",
                 save_best_only=True,
                 verbose=1)
 
     csv_logger = CSVLogger("./Training_loss_to_5Gev/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" + 
                            "std_" + str(n_std) + "_" + 
-                           "training_log.csv")
+                           "training_log_2.csv")
 
     check_list.append(csv_logger)
     check_list.append(checkpoint)
@@ -235,8 +267,8 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
     
     model.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
-                       "std_" + str(n_std) + "_" + 
-                       ".h5")
+                       "std_" + str(n_std) + 
+                       "_2.h5")
     
     
     """
@@ -281,8 +313,8 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
     
     model_learning_poisson.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
-                       "std_" + str(n_std) + "_poisson_10_" + 
-                       ".h5")
+                       "std_" + str(n_std) + "_poisson_10" + 
+                       "_2.h5")
     
     logging.info("=====Finish=====")
     logging.info("\n")
