@@ -13,7 +13,7 @@ Currently, we facus on the DUNE experiment.
 
 * std_study_to_5GeV.py
     * energy range: up to 5 GeV 
-    * neutrino type: $\nu_e$ + $\nu_\bar{e}$ + $\nu_\mu$ + $\nu_\bar{\mu}$
+    * neutrino type: $$\nu_e$$ + $\nu_\bar{e}$ + $\nu_\mu$ + $\nu_\bar{\mu}$
     * model: there are two kinds of model in the scripts. One is for $\theta_{23}$, the other is for $\delta$.
     * training precedure: asimov -> add gaussian noise with std=0.001 -> add gaussian noise with std=0.001215 -> ...... -> add gaussian noise with std=2.000 -> poisson(X20)
     
