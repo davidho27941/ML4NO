@@ -7,7 +7,7 @@ Currently, we facus on the DUNE experiment.
 
 * std_study_full_energy.py
     * energy range: full specturm 
-    * neutrino type: $\nu_e$ + $\nu_\bar{e}$ + $\nu_\mu$ + $\nu_\bar{\mu}$ <a href="https://www.codecogs.com/eqnedit.php?latex=$\nu_e$" target="_blank"><img src="https://latex.codecogs.com/svg.latex?$\nu_e$" title="$\nu_e$" /></a>
+    * neutrino type: $\nu_e$ + $\nu_\bar{e}$ + $\nu_\mu$ + $\nu_\bar{\mu}$ <a href="https://www.codecogs.com/eqnedit.php?latex=\nu_{e}" target="_blank"><img src="https://latex.codecogs.com/svg.latex?\nu_{e}" title="\nu_{e}" /></a>
     * model: one model is for both of parameters
     * training precedure: asimov -> add gaussian noise with std=0.001 -> add gaussian noise with std=0.001215 -> ...... -> add gaussian noise with std=2.000 -> poisson(X20)
 
