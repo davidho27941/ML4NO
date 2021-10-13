@@ -51,4 +51,11 @@ e.g.
 python3 std_study_full_energy.py dune delta
 ```
 
+## Results:
+All results are in corresponding notebooks.
+
+e.g. 
+The result of `std_study_full_energy.py` is in `contour_full_energy.ipynb`.
+
+
 
