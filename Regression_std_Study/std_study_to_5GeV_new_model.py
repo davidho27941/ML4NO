@@ -81,6 +81,9 @@ Define Model
 
 if physics_parameter == "theta23":
 
+    """
+    Model 1
+    """
     def Regression_Model(name, num_of_bins):
 
         # input: nu_e, nu_mu, nu_ebar, nu_mubar
@@ -104,7 +107,9 @@ if physics_parameter == "theta23":
         return model
     
 elif physics_parameter == "delta":
-    
+    """
+    Model 2
+    """
 #     def Regression_Model(name, num_of_bins):
 
 #         input_shape = (num_of_bins,)
@@ -126,24 +131,67 @@ elif physics_parameter == "delta":
 
 #         return model
 
+    """
+    Model 3
+    """
+#     def Regression_Model(name, num_of_bins, num_of_bins_diff):
+
+#         # input: nu_e, nu_mu, nu_ebar, nu_mubar
+#         input_shape = (num_of_bins,)
+#         model_all = Sequential(name = "Regression_Model_for_" + str(name))
+#         model_all.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization_all'))
+#         model_all.add(Dense(256, activation='relu', name = 'dense_1_all'))
+
+#         # input: (nu_e - nu_ebar), (nu_mu-nu_mubar)
+#         input_shape_diff = (num_of_bins_diff,)
+#         model_diff = Sequential(name = "Regression_Model_for_" + str(name) + "_nu_nu_bar_different")
+#         model_diff.add(BatchNormalization(input_shape=input_shape_diff, name = 'BatchNormalization_diff'))
+#         model_diff.add(Dense(256, activation='relu', name = 'dense_1_diff'))
+
+
+#         mergedOut = Concatenate()([model_all.output,model_diff.output])
+#         mergedOut = Dense(128, activation='relu', name = 'dense_2')(mergedOut)
+#         mergedOut = Dense(128, activation='relu', name = 'dense_3')(mergedOut)
+#         mergedOut = Dense(1, activation='relu', name = physics_parameter)(mergedOut)
+
+#         newModel = Model([model_all.input,model_diff.input], mergedOut,name = 'Combined_for_delta')
+
+
+
+#     #     model_opt = keras.optimizers.Adadelta()
+#         model_opt = keras.optimizers.Adam()
+
+
+#         newModel.compile(loss="mean_squared_error",
+#                            optimizer=model_opt,
+#                            metrics=["mse"])
+    
+#         return newModel
+    
+    """
+    Model 4
+    """
     def Regression_Model(name, num_of_bins, num_of_bins_diff):
 
         # input: nu_e, nu_mu, nu_ebar, nu_mubar
         input_shape = (num_of_bins,)
-        model_all = Sequential(name = "Regression_Model_for_" + str(name))
+        model_all = Sequential(name = "Regression_Model_4_for_" + str(name))
         model_all.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization_all'))
-        model_all.add(Dense(256, activation='relu', name = 'dense_1_all'))
+        model_all.add(Dense(512, activation='relu', name = 'dense_1_all'))
 
         # input: (nu_e - nu_ebar), (nu_mu-nu_mubar)
         input_shape_diff = (num_of_bins_diff,)
         model_diff = Sequential(name = "Regression_Model_for_" + str(name) + "_nu_nu_bar_different")
         model_diff.add(BatchNormalization(input_shape=input_shape_diff, name = 'BatchNormalization_diff'))
-        model_diff.add(Dense(256, activation='relu', name = 'dense_1_diff'))
+        model_diff.add(Dense(512, activation='relu', name = 'dense_1_diff'))
 
 
         mergedOut = Concatenate()([model_all.output,model_diff.output])
-        mergedOut = Dense(128, activation='relu', name = 'dense_2')(mergedOut)
-        mergedOut = Dense(128, activation='relu', name = 'dense_3')(mergedOut)
+        mergedOut = Dense(512, activation='relu', name = 'dense_2')(mergedOut)
+        mergedOut = Dense(256, activation='relu', name = 'dense_3')(mergedOut)
+        mergedOut = Dense(256, activation='relu', name = 'dense_4')(mergedOut)
+        mergedOut = Dense(128, activation='relu', name = 'dense_5')(mergedOut)
+        mergedOut = Dense(128, activation='relu', name = 'dense_6')(mergedOut)
         mergedOut = Dense(1, activation='relu', name = physics_parameter)(mergedOut)
 
         newModel = Model([model_all.input,model_diff.input], mergedOut,name = 'Combined_for_delta')
@@ -229,14 +277,14 @@ checkpoint = ModelCheckpoint(
             filepath="./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + "_" + 
-                       "checkpoint_3.h5",
+                       "checkpoint_4.h5",
             save_best_only=True,
             verbose=1)
 
 csv_logger = CSVLogger("./Training_loss_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + "_" + 
-                       "training_log_3.csv")
+                       "training_log_4.csv")
 
 check_list.append(csv_logger)
 check_list.append(checkpoint)
@@ -271,7 +319,7 @@ elif physics_parameter == "delta":
 model.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        str("asimov") + 
-                       "_3.h5")
+                       "_4.h5")
 #======================================================#
 
 
@@ -302,14 +350,14 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
                 filepath="./Model_to_5Gev/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" + 
                            "std_" + str(n_std) + "_" + 
-                           "checkpoint_3.h5",
+                           "checkpoint_4.h5",
                 save_best_only=True,
                 verbose=1)
 
     csv_logger = CSVLogger("./Training_loss_to_5Gev/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" + 
                            "std_" + str(n_std) + "_" + 
-                           "training_log_3.csv")
+                           "training_log_4.csv")
 
     check_list.append(csv_logger)
     check_list.append(checkpoint)
@@ -344,7 +392,7 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
     model.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        "std_" + str(n_std) + 
-                       "_3.h5")
+                       "_4.h5")
     
     
     """
@@ -406,7 +454,7 @@ for n_std, scale in enumerate(tqdm(scale_steps)):
     model_learning_poisson.save("./Model_to_5Gev/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" + 
                        "std_" + str(n_std) + "_poisson_10" + 
-                       "_3.h5")
+                       "_4.h5")
     
     logging.info("=====Finish=====")
     logging.info("\n")
