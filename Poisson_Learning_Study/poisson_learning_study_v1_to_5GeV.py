@@ -72,35 +72,80 @@ except:
     print("********* Usage: python3 poission_learning_study_v1_to_5GeV.py experiment physics_parameter *********")
     sys.exit(1)
 
+
 """
 Define Model
 """
 #======================================================#
-def Regression_Model(name, num_of_bins):
 
+# """
+# Model 1
+# """
+# def Regression_Model(name, num_of_bins):
+
+#     # input: nu_e, nu_mu, nu_ebar, nu_mubar
+#     input_shape = (num_of_bins,)
+#     model = Sequential(name = "Regression_Model_for_" + str(name))
+#     model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
+#     model.add(Dense(512, activation='relu', name = 'dense_1'))
+#     model.add(Dense(512, activation='relu', name = 'dense_2'))
+#     model.add(Dense(1024, activation='relu', name = 'dense_3'))
+#     model.add(Dense(1, activation='relu', name = physics_parameter))
+
+
+# #     model_opt = keras.optimizers.Adadelta()
+#     model_opt = keras.optimizers.Adam()
+
+
+#     model.compile(loss="mean_squared_error",
+#                        optimizer=model_opt,
+#                        metrics=["mse"])
+
+#     return model
+
+
+"""
+Model 4
+"""
+def Regression_Model(name, num_of_bins, num_of_bins_diff):
+
+    # input: nu_e, nu_mu, nu_ebar, nu_mubar
     input_shape = (num_of_bins,)
-    model = Sequential(name = "Poisson_Model_for_" + str(name))
-    model.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization'))
-#     model.add(keras.Input(shape=input_shape, name = 'input'))
-#     model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l1(regular_l1),  name = 'dense_1'))
-#     model.add(Dense(512, activation='relu', kernel_regularizer=regularizers.l1(regular_l1), name = 'dense_2'))
-#     model.add(Dense(1024, activation='relu', kernel_regularizer=regularizers.l1(regular_l1), name = 'dense_3'))
-    model.add(Dense(512, activation='relu',  name = 'dense_1'))
-    model.add(Dense(512, activation='relu', name = 'dense_2'))
-    model.add(Dense(1024, activation='relu', name = 'dense_3'))
-    model.add(Dense(1, activation="relu", name = physics_parameter))
-#     model.add(Dense(1, activation=activations.relu(max_value=1), name = physics_parameter))
-    model.add(Dropout(0.1))
-    
+    model_all = Sequential(name = "Regression_Model_4_for_" + str(name))
+    model_all.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization_all'))
+    model_all.add(Dense(512, activation='relu', name = 'dense_1_all'))
+
+    # input: (nu_e - nu_ebar), (nu_mu-nu_mubar)
+    input_shape_diff = (num_of_bins_diff,)
+    model_diff = Sequential(name = "Regression_Model_for_" + str(name) + "_nu_nu_bar_different")
+    model_diff.add(BatchNormalization(input_shape=input_shape_diff, name = 'BatchNormalization_diff'))
+    model_diff.add(Dense(512, activation='relu', name = 'dense_1_diff'))
+
+
+    mergedOut = Concatenate()([model_all.output,model_diff.output])
+    mergedOut = Dense(512, activation='relu', name = 'dense_2')(mergedOut)
+    mergedOut = Dense(256, activation='relu', name = 'dense_3')(mergedOut)
+    mergedOut = Dense(256, activation='relu', name = 'dense_4')(mergedOut)
+    mergedOut = Dense(128, activation='relu', name = 'dense_5')(mergedOut)
+    mergedOut = Dense(128, activation='relu', name = 'dense_6')(mergedOut)
+    mergedOut = Dense(1, activation='relu', name = physics_parameter)(mergedOut)
+
+    newModel = Model([model_all.input,model_diff.input], mergedOut,name = 'Combined_for_delta')
+
+
+
 #     model_opt = keras.optimizers.Adadelta()
     model_opt = keras.optimizers.Adam()
-    
-    
-    model.compile(loss="mean_squared_error",
+
+
+    newModel.compile(loss="mean_squared_error",
                        optimizer=model_opt,
                        metrics=["mse"])
-    
-    return model
+
+    return newModel
+
+
+
 #======================================================#
 
 
@@ -155,7 +200,14 @@ logging.info("# of test : {}".format(len(x_test)))
 Create Model
 """
 #======================================================#
-model = Regression_Model(physics_parameter, x_train.shape[1])
+# model = Regression_Model(physics_parameter, x_train.shape[1])  #10/15 modified
+# model = Regression_Model(physics_parameter, x_train.shape[1], (x_train[:,:72]-x_train[:,72:]).shape[1] )  #10/15 added
+
+# continue training from # of 40  
+model = load_model("./Model_v1_to_5GeV/" + str(experiment) + "_" + 
+                           str(physics_parameter) + "_" +
+                           "poisson_" + str("40")+ "_2.h5")
+
 model.summary()
 #======================================================#
 
@@ -167,13 +219,15 @@ Model Training (Asimov)
 check_list=[]
 csv_logger = CSVLogger("./Training_loss_v1_to_5GeV/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" +
-                       "training_log_poisson_0" + ".csv")
+                       "training_log_poisson_0" + "_2.csv")
 
 
 check_list.append(csv_logger)
 
 
-model.fit(x_train, y_train,
+model.fit( #x_train, #10/15 modified
+           [x_train, (x_train[:,:72]-x_train[:,72:])],  #10/15 added
+           y_train,
            validation_split = 0.1,
            batch_size=64,
            epochs=20,
@@ -182,9 +236,13 @@ model.fit(x_train, y_train,
            callbacks=check_list
          )
 
+# model.save("./Model_v1_to_5GeV/" + str(experiment) + "_" + 
+#                        str(physics_parameter) + "_" +
+#                        "poisson_0" + "_2.h5")
+
 model.save("./Model_v1_to_5GeV/" + str(experiment) + "_" + 
                        str(physics_parameter) + "_" +
-                       "poisson_0" + ".h5")
+                       "poisson_41" + "_2.h5")
 #======================================================#
 
 
@@ -192,7 +250,7 @@ model.save("./Model_v1_to_5GeV/" + str(experiment) + "_" +
 Model Training (Poisson Noise)
 """
 #======================================================#
-for i in tqdm(range(40)):
+for i in tqdm(range(41,100,1)):
     time.sleep(0.5)
     
     
@@ -207,13 +265,15 @@ for i in tqdm(range(40)):
         t1_time = time.time()
         time.sleep(0.5)
         
-        model.fit(x_train, y_train,
-               validation_split = 0.1,
-               batch_size=64,
-               epochs=5,
-               verbose=1,
-               shuffle = True
-               )
+        model.fit( #x_train, #10/15 modified
+                   [x_train, (x_train[:,:72]-x_train[:,72:])],  #10/15 added 
+                   y_train,
+                   validation_split = 0.1,
+                   batch_size=64,
+                   epochs=5,
+                   verbose=1,
+                   shuffle = True
+                  )
         
         t2_time = time.time()
         logging.info("\033[3;33m Time Cost for this Step : {:.4f} min\033[0;m".format((t2_time-t1_time)/60.))
@@ -254,13 +314,15 @@ for i in tqdm(range(40)):
     check_list=[]
     csv_logger = CSVLogger("./Training_loss_v1_to_5GeV/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
-                           "training_log_poisson_" +str(i+1)+ ".csv")
+                           "training_log_poisson_" +str(i+1)+ "_2.csv")
 
 
     check_list.append(csv_logger)
 
 
-    model.fit(x_train_poisson, y_train,
+    model.fit( #x_train_poisson,  #10/15 modified
+               [x_train_poisson,(x_train_poisson[:,:72]-x_train_poisson[:,72:])], #10/15 added 
+               y_train,
                validation_split = 0.1,
                batch_size=64,
                epochs=1,
@@ -271,7 +333,7 @@ for i in tqdm(range(40)):
 
     model.save("./Model_v1_to_5GeV/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
-                           "poisson_" + str(i+1)+ ".h5")
+                           "poisson_" + str(i+1)+ "_2.h5")
     #++++++++++++++++++++++++++++++++++++++++++#
     
 #======================================================#
