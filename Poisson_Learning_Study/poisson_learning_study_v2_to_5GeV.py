@@ -105,9 +105,60 @@ Define Model
 #     return model
 
 
+# """
+# Model 4
+# """
+# def Regression_Model(name, num_of_bins, num_of_bins_diff):
+
+#     # input: nu_e, nu_mu, nu_ebar, nu_mubar
+#     input_shape = (num_of_bins,)
+#     model_all = Sequential(name = "Regression_Model_4_for_" + str(name))
+#     model_all.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization_all'))
+#     model_all.add(Dense(512, activation='relu', name = 'dense_1_all'))
+
+#     # input: (nu_e - nu_ebar), (nu_mu-nu_mubar)
+#     input_shape_diff = (num_of_bins_diff,)
+#     model_diff = Sequential(name = "Regression_Model_for_" + str(name) + "_nu_nu_bar_different")
+#     model_diff.add(BatchNormalization(input_shape=input_shape_diff, name = 'BatchNormalization_diff'))
+#     model_diff.add(Dense(512, activation='relu', name = 'dense_1_diff'))
+
+
+#     mergedOut = Concatenate()([model_all.output,model_diff.output])
+#     mergedOut = Dense(512, activation='relu', name = 'dense_2')(mergedOut)
+#     mergedOut = Dense(256, activation='relu', name = 'dense_3')(mergedOut)
+#     mergedOut = Dense(256, activation='relu', name = 'dense_4')(mergedOut)
+#     mergedOut = Dense(128, activation='relu', name = 'dense_5')(mergedOut)
+#     mergedOut = Dense(128, activation='relu', name = 'dense_6')(mergedOut)
+#     mergedOut = Dropout(0.1, name = 'dropout')(mergedOut) # 10/19 modified
+#     mergedOut = Dense(1, activation='relu', name = physics_parameter)(mergedOut)
+
+#     newModel = Model([model_all.input,model_diff.input], mergedOut,name = 'Combined_for_delta')
+
+
+
+# #     model_opt = keras.optimizers.Adadelta()
+#     model_opt = keras.optimizers.Adam()
+
+
+#     newModel.compile(loss="mean_squared_error",
+#                        optimizer=model_opt,
+#                        metrics=["mse"])
+
+#     return newModel
+
 """
-Model 4
+Model 5 # 10/26 modified
 """
+def my_loss_fn(y_true, y_pred):
+    squared_difference = tf.square(y_true - y_pred)
+    mse = tf.reduce_mean(squared_difference, axis=-1) 
+    
+    preserve_length = tf.sqrt(tf.reduce_sum(tf.square(y_pred), axis=-1))
+    preserve_length = tf.abs(tf.subtract(preserve_length, 1))
+    
+    loss = tf.add(mse, preserve_length)
+    return loss #tf.reduce_mean(squared_difference, axis=-1)  # Note the `axis=-1`
+
 def Regression_Model(name, num_of_bins, num_of_bins_diff):
 
     # input: nu_e, nu_mu, nu_ebar, nu_mubar
@@ -129,9 +180,10 @@ def Regression_Model(name, num_of_bins, num_of_bins_diff):
     mergedOut = Dense(256, activation='relu', name = 'dense_4')(mergedOut)
     mergedOut = Dense(128, activation='relu', name = 'dense_5')(mergedOut)
     mergedOut = Dense(128, activation='relu', name = 'dense_6')(mergedOut)
-    mergedOut = Dense(1, activation='relu', name = physics_parameter)(mergedOut)
+    mergedOut = Dropout(0.1, name = 'dropout')(mergedOut) 
+    mergedOut = Dense(2, activation='linear', name = physics_parameter)(mergedOut)
 
-    newModel = Model([model_all.input,model_diff.input], mergedOut,name = 'Combined_for_delta')
+    newModel = Model([model_all.input,model_diff.input], mergedOut,name = 'Combined')
 
 
 
@@ -140,8 +192,9 @@ def Regression_Model(name, num_of_bins, num_of_bins_diff):
 
 
     newModel.compile(loss="mean_squared_error",
+#                      loss=my_loss_fn,
                        optimizer=model_opt,
-                       metrics=["mse"])
+                       metrics=["mse","mae"])
 
     return newModel
 
@@ -176,7 +229,7 @@ data_all = np.column_stack([training_data["ve_"+str(experiment)][:,:36], trainin
 # scaler.fit(data_all)
 # data_all = scaler.transform(data_all)
 
-# file_path = "/dicos_ui_home/alanchung/ML4NO/Standardization_2.h5"
+# file_path = "/dicos_ui_home/alanchung/ML4NO/Standardization_4.h5"
 # if not os.path.isfile(file_path):
 #     dump(scaler, file_path)
 # else:
@@ -185,16 +238,20 @@ data_all = np.column_stack([training_data["ve_"+str(experiment)][:,:36], trainin
 
 
 target = training_data[physics_parameter]
+target = target/180*np.pi # 10/26 modified
 
 x_train = data_all[:900000]
 y_train = target[:900000]
+y_train = np.column_stack([np.sin(y_train), np.cos(y_train)]) # 10/26 modified
 
 x_test = data_all[900000:]
 y_test = target[900000:]
+y_test = np.column_stack([np.sin(y_test), np.cos(y_test)]) # 10/26 modified
 
-
-logging.info("# of train: {}".format(len(x_train)))
-logging.info("# of test : {}".format(len(x_test)))
+logging.info("X train shape: {}".format(x_train.shape))
+logging.info("X test shape: {}".format(x_test.shape))
+logging.info("Y train shape: {}".format(y_train.shape))
+logging.info("Y test shape: {}".format(y_test.shape))
 #======================================================#
 
 
@@ -206,14 +263,14 @@ Create Model
 # model = Regression_Model(physics_parameter, x_train.shape[1])  #10/15 modified
 # model = Regression_Model(physics_parameter, x_train.shape[1], (x_train[:,:72]-x_train[:,72:]).shape[1] )  #10/15 added
 
-# continue training from # of 100  
-model = load_model("./Model_v2_to_5GeV/" + str(experiment) + "_" + 
-                           str(physics_parameter) + "_" +
-                           "poisson_" + str("99")+ "_2.h5")
 
-model.summary()
+# model.summary()
 #======================================================#
 
+# continue training from # of 186  
+model = load_model("./Model_v2_to_5GeV/" + str(experiment) + "_" + 
+                           str(physics_parameter) + "_" +
+                           "poisson_" + str("185")+ "_4.h5")
 
 
 
@@ -222,7 +279,7 @@ model.summary()
 Model Training (Poisson Noise)
 """
 #======================================================#
-for i in tqdm(range(100,200,1)):
+for i in tqdm(range(186,300,1)):
     time.sleep(0.5)
 
 
@@ -250,7 +307,7 @@ for i in tqdm(range(100,200,1)):
     check_list=[]
     csv_logger = CSVLogger("./Training_loss_v2_to_5GeV/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
-                           "training_log_poisson_" +str(i)+ "_2.csv")
+                           "training_log_poisson_" +str(i)+ "_4.csv")
 
 
     check_list.append(csv_logger)
@@ -269,7 +326,7 @@ for i in tqdm(range(100,200,1)):
 
     model.save("./Model_v2_to_5GeV/" + str(experiment) + "_" + 
                            str(physics_parameter) + "_" +
-                           "poisson_" + str(i)+ "_2.h5")
+                           "poisson_" + str(i)+ "_4.h5")
 #======================================================#
     
 
