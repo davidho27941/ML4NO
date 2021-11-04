@@ -93,8 +93,8 @@ def my_loss_fn(y_true, y_pred):
 def Regression_Model(trig=False):
     #Ref: https://towardsdatascience.com/can-machine-learn-the-concept-of-sine-4047dced3f11
     inputs = Input(shape=(36,4),name = 'input')
-    conv1d_1 = Conv1D(filters=1, kernel_size=10,strides=1, activation='relu', name = 'conv1d_1')(inputs)
-    conv1d_2 = Conv1D(filters=1, kernel_size=10,strides=1, activation='relu', name = 'conv1d_2')(conv1d_1)
+    conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'conv1d_1')(inputs)
+    conv1d_2 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'conv1d_2')(conv1d_1)
     flatten_1 = Flatten(name = "flatten_1")(conv1d_2)
     dense_1 = Dense(512, activation='relu', name = 'dense_1')(flatten_1)
     dense_2 = Dense(256, activation='relu', name = 'dense_2')(dense_1)
