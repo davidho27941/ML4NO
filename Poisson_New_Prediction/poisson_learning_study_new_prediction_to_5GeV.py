@@ -200,18 +200,67 @@ Define Model
 
 #     return regression_model
 
+# """
+# Model 4 #11/05 modified
+# """
+# def Regression_Model(trig=False):
+#     #Ref: https://towardsdatascience.com/can-machine-learn-the-concept-of-sine-4047dced3f11
+#     inputs = Input(shape=(36,4),name = 'input')
+#     conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'conv1d_1')(inputs)
+#     pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'pooling1d_1')(conv1d_1)
+#     conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'conv1d_2')(pooling1d_1)
+#     pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'pooling1d_2')(conv1d_2)
+#     flatten_1 = Flatten(name = "flatten_1")(pooling1d_2)
+#     dense_1 = Dense(512, activation='relu', name = 'dense_1')(flatten_1)
+#     dense_2 = Dense(256, activation='relu', name = 'dense_2')(dense_1)
+#     dense_3 = Dense(256, activation='relu', name = 'dense_3')(dense_2)
+#     dense_4 = Dense(128, activation='relu', name = 'dense_4')(dense_3)
+#     dense_5 = Dense(128, activation='relu', name = 'dense_5')(dense_4)
+    
+#     if trig == False:
+#         out1 = Dense(1, activation='linear', name = "output1")(dense_5)
+        
+#     elif trig == True:
+#         out_delta = Dense(2, activation='linear', name = "out_delta")(dense_5)
+#         out_theta23 = Dense(1, activation='relu', name = "out_theta23")(dense_5)
+
+#     regression_model = Model(inputs=inputs, outputs=[out_delta, out_theta23], name = 'Model_4')
+
+
+
+# #     model_opt = keras.optimizers.Adadelta()
+#     model_opt = keras.optimizers.Adam()
+
+#     regression_model.compile(loss="mean_squared_error",
+#                        optimizer=model_opt,
+#                        metrics=["mse","mae"])
+
+#     return regression_model
+
+
 """
-Model 4 #11/05 modified
+Model 5 #11/08 modified
 """
 def Regression_Model(trig=False):
     #Ref: https://towardsdatascience.com/can-machine-learn-the-concept-of-sine-4047dced3f11
-    inputs = Input(shape=(36,4),name = 'input')
-    conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'conv1d_1')(inputs)
-    pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'pooling1d_1')(conv1d_1)
-    conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'conv1d_2')(pooling1d_1)
-    pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'pooling1d_2')(conv1d_2)
-    flatten_1 = Flatten(name = "flatten_1")(pooling1d_2)
-    dense_1 = Dense(512, activation='relu', name = 'dense_1')(flatten_1)
+    appearance_inputs = Input(shape=(36,2),name = 'appearance_input')
+    appearance_conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'appearance_conv1d_1')(appearance_inputs)
+    appearance_pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'appearance_pooling1d_1')(appearance_conv1d_1)
+    appearance_conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'appearance_conv1d_2')(appearance_pooling1d_1)
+    appearance_pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'appearance_pooling1d_2')(appearance_conv1d_2)
+    appearance_flatten_1 = Flatten(name = "appearance_flatten_1")(appearance_pooling1d_2)
+    
+    disappearance_inputs = Input(shape=(36,2),name = 'disappearance_input')
+    disappearance_conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'disappearance_conv1d_1')(disappearance_inputs)
+    disappearance_pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'disappearance_pooling1d_1')(disappearance_conv1d_1)
+    disappearance_conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'disappearance_conv1d_2')(disappearance_pooling1d_1)
+    disappearance_pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'disappearance_pooling1d_2')(disappearance_conv1d_2)
+    disappearance_flatten_1 = Flatten(name = "disappearance_flatten_1")(disappearance_pooling1d_2)
+    
+    
+    mergedOut = Concatenate()([appearance_flatten_1,disappearance_flatten_1])
+    
+    dense_1 = Dense(512, activation='relu', name = 'dense_1')(mergedOut)
     dense_2 = Dense(256, activation='relu', name = 'dense_2')(dense_1)
     dense_3 = Dense(256, activation='relu', name = 'dense_3')(dense_2)
     dense_4 = Dense(128, activation='relu', name = 'dense_4')(dense_3)
@@ -224,7 +273,7 @@ def Regression_Model(trig=False):
         out_delta = Dense(2, activation='linear', name = "out_delta")(dense_5)
         out_theta23 = Dense(1, activation='relu', name = "out_theta23")(dense_5)
 
-    regression_model = Model(inputs=inputs, outputs=[out_delta, out_theta23], name = 'Model_3')
+    regression_model = Model(inputs=[appearance_inputs,disappearance_inputs], outputs=[out_delta, out_theta23], name = 'Model_5')
 
 
 
@@ -236,6 +285,7 @@ def Regression_Model(trig=False):
                        metrics=["mse","mae"])
 
     return regression_model
+
 
 
 
@@ -309,12 +359,34 @@ for i in tqdm(range(0,300,1)):
     """
     Add Poisson Noise
     """
+#     """
+#     #11/08 modified
+#     """
+#     x_train_poisson = np.random.poisson(x_train)
+#     x_train_poisson = x_train_poisson.reshape(len(x_train_poisson),4,36)
+#     x_train_poisson = np.array([ element.T for element in x_train_poisson])
+
+#     logging.info("\n")
+#     logging.info("x_train_poisson shape: {}".format(x_train_poisson.shape))
+#     logging.info("\n")
+    
+    """
+    #11/08 modified
+    """
     x_train_poisson = np.random.poisson(x_train)
-    x_train_poisson = x_train_poisson.reshape(len(x_train_poisson),4,36)
-    x_train_poisson = np.array([ element.T for element in x_train_poisson])
+    
+    appearance_x_train_poisson = x_train_poisson[:,:72]
+    appearance_x_train_poisson = appearance_x_train_poisson.reshape(len(appearance_x_train_poisson),2,36)
+    appearance_x_train_poisson = np.array([ element.T for element in appearance_x_train_poisson])
+    
+    disappearance_x_train_poisson = x_train_poisson[:,72:]
+    disappearance_x_train_poisson = disappearance_x_train_poisson.reshape(len(disappearance_x_train_poisson),2,36)
+    disappearance_x_train_poisson = np.array([ element.T for element in disappearance_x_train_poisson])
+    
     
     logging.info("\n")
-    logging.info("x_train_poisson shape: {}".format(x_train_poisson.shape))
+    logging.info("appearance_x_train_poisson shape: {}".format(appearance_x_train_poisson.shape))
+    logging.info("disappearance_x_train_poisson shape: {}".format(disappearance_x_train_poisson.shape))
     logging.info("\n")
     
     t2_time = time.time()
@@ -328,14 +400,16 @@ for i in tqdm(range(0,300,1)):
     """
     check_list=[]
     csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
-                           "training_log_poisson_" +str(i)+ "_4.csv")
+                           "training_log_poisson_" +str(i)+ "_5.csv")
 
 
     check_list.append(csv_logger)
 
 
-    model.fit( x_train_poisson,
+    model.fit( 
+#              x_train_poisson, # 11/08 modified
 #                y_train, # 11/05 modified
+              [appearance_x_train_poisson, disappearance_x_train_poisson], # 11/08 modified
               [y_train_delta, y_train_theta23],  # 11/05 modified
                validation_split = 0.1,
                batch_size=64,
@@ -346,7 +420,7 @@ for i in tqdm(range(0,300,1)):
              )
 
     model.save("./Model/" + str(experiment) + "_" + 
-                           "poisson_" + str(i)+ "_4.h5")
+                           "poisson_" + str(i)+ "_5.h5")
 #======================================================#
     
 
