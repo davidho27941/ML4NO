@@ -302,7 +302,10 @@ training_data = np.load("../Data/n1000000_0910_all_flat.npz")
 Stack Data
 """
 #======================================================#
-data_all = np.column_stack([training_data["ve_"+str(experiment)][:,:36], training_data["vu_"+str(experiment)][:,:36], training_data["vebar_"+str(experiment)][:,:36], training_data["vubar_"+str(experiment)][:,:36]])
+# data_all = np.column_stack([training_data["ve_"+str(experiment)][:,:36], training_data["vu_"+str(experiment)][:,:36], training_data["vebar_"+str(experiment)][:,:36], training_data["vubar_"+str(experiment)][:,:36]])  #11/08 modified
+
+data_all = np.column_stack([training_data["ve_"+str(experiment)][:,:36], training_data["vebar_"+str(experiment)][:,:36], training_data["vu_"+str(experiment)][:,:36], training_data["vubar_"+str(experiment)][:,:36]])
+
 
 
 target = np.column_stack( [training_data["delta"], training_data["theta23"]])
