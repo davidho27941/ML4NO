@@ -285,42 +285,92 @@ Model 5 #11/08 modified
 
 #     return regression_model
 
+# """
+# Model 6 #11/09  modified
+# """
+
+# def Regression_Model(num_of_bins, num_of_bins_diff, trig=False):
+#     #Ref: https://towardsdatascience.com/can-machine-learn-the-concept-of-sine-4047dced3f11
+#     appearance_inputs = Input(shape=(36,2),name = 'appearance_input')
+#     appearance_conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'appearance_conv1d_1')(appearance_inputs)
+#     appearance_pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'appearance_pooling1d_1')(appearance_conv1d_1)
+#     appearance_conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'appearance_conv1d_2')(appearance_pooling1d_1)
+#     appearance_pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'appearance_pooling1d_2')(appearance_conv1d_2)
+#     appearance_flatten_1 = Flatten(name = "appearance_flatten_1")(appearance_pooling1d_2)
+    
+#     disappearance_inputs = Input(shape=(36,2),name = 'disappearance_input')
+#     disappearance_conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'disappearance_conv1d_1')(disappearance_inputs)
+#     disappearance_pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'disappearance_pooling1d_1')(disappearance_conv1d_1)
+#     disappearance_conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'disappearance_conv1d_2')(disappearance_pooling1d_1)
+#     disappearance_pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'disappearance_pooling1d_2')(disappearance_conv1d_2)
+#     disappearance_flatten_1 = Flatten(name = "disappearance_flatten_1")(disappearance_pooling1d_2)
+    
+    
+#     input_shape = (num_of_bins,)
+#     model_all = Sequential(name = "Regression_Model_6")
+#     model_all.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization_all'))
+#     model_all.add(Dense(512, activation='relu', name = 'dense_1_all'))
+
+#     # input: (nu_e - nu_ebar), (nu_mu-nu_mubar)
+#     input_shape_diff = (num_of_bins_diff,)
+#     model_diff = Sequential(name = "Regression_Model_6_nu_nu_bar_different")
+#     model_diff.add(BatchNormalization(input_shape=input_shape_diff, name = 'BatchNormalization_diff'))
+#     model_diff.add(Dense(512, activation='relu', name = 'dense_1_diff'))
+    
+    
+    
+#     mergedOut = Concatenate()([appearance_flatten_1, 
+#                                disappearance_flatten_1, 
+#                                model_all.output, 
+#                                model_diff.output
+#                               ])
+    
+#     dense_1 = Dense(512, activation='relu', name = 'dense_1')(mergedOut)
+#     dense_2 = Dense(256, activation='relu', name = 'dense_2')(dense_1)
+#     dense_3 = Dense(256, activation='relu', name = 'dense_3')(dense_2)
+#     dense_4 = Dense(128, activation='relu', name = 'dense_4')(dense_3)
+#     dense_5 = Dense(128, activation='relu', name = 'dense_5')(dense_4)
+    
+#     if trig == False:
+#         out1 = Dense(1, activation='linear', name = "output1")(dense_5)
+        
+#     elif trig == True:
+#         out_delta = Dense(2, activation='linear', name = "out_delta")(dense_5)
+#         out_theta23 = Dense(1, activation='relu', name = "out_theta23")(dense_5)
+
+#     regression_model = Model(inputs=[appearance_inputs, disappearance_inputs, model_all.input, model_diff.input], 
+#                              outputs=[out_delta, out_theta23], 
+#                              name = 'Model_6')
+
+
+# #     model_opt = keras.optimizers.Adadelta()
+#     model_opt = keras.optimizers.Adam()
+
+#     regression_model.compile(loss="mean_squared_error",
+#                        optimizer=model_opt,
+#                        metrics=["mse","mae"])
+
+#     return regression_model
+
+
 """
-Model 6 #11/09  modified
+Model 7 #11/09  modified
 """
 
 def Regression_Model(num_of_bins, num_of_bins_diff, trig=False):
-    #Ref: https://towardsdatascience.com/can-machine-learn-the-concept-of-sine-4047dced3f11
-    appearance_inputs = Input(shape=(36,2),name = 'appearance_input')
-    appearance_conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'appearance_conv1d_1')(appearance_inputs)
-    appearance_pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'appearance_pooling1d_1')(appearance_conv1d_1)
-    appearance_conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'appearance_conv1d_2')(appearance_pooling1d_1)
-    appearance_pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'appearance_pooling1d_2')(appearance_conv1d_2)
-    appearance_flatten_1 = Flatten(name = "appearance_flatten_1")(appearance_pooling1d_2)
-    
-    disappearance_inputs = Input(shape=(36,2),name = 'disappearance_input')
-    disappearance_conv1d_1 = Conv1D(filters=5, kernel_size=10,strides=1, activation='relu', name = 'disappearance_conv1d_1')(disappearance_inputs)
-    disappearance_pooling1d_1 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'disappearance_pooling1d_1')(disappearance_conv1d_1)
-    disappearance_conv1d_2 = Conv1D(filters=5, kernel_size=5,strides=1, activation='relu', name = 'disappearance_conv1d_2')(disappearance_pooling1d_1)
-    disappearance_pooling1d_2 = MaxPooling1D(pool_size=2, strides=None, padding="valid", name = 'disappearance_pooling1d_2')(disappearance_conv1d_2)
-    disappearance_flatten_1 = Flatten(name = "disappearance_flatten_1")(disappearance_pooling1d_2)
-    
-    
     input_shape = (num_of_bins,)
-    model_all = Sequential(name = "Regression_Model_6")
+    model_all = Sequential(name = "Regression_Model_7")
     model_all.add(BatchNormalization(input_shape=input_shape, name = 'BatchNormalization_all'))
     model_all.add(Dense(512, activation='relu', name = 'dense_1_all'))
 
     # input: (nu_e - nu_ebar), (nu_mu-nu_mubar)
     input_shape_diff = (num_of_bins_diff,)
-    model_diff = Sequential(name = "Regression_Model_6_nu_nu_bar_different")
+    model_diff = Sequential(name = "Regression_Model_7_nu_nu_bar_different")
     model_diff.add(BatchNormalization(input_shape=input_shape_diff, name = 'BatchNormalization_diff'))
     model_diff.add(Dense(512, activation='relu', name = 'dense_1_diff'))
     
     
-    
-    mergedOut = Concatenate()([appearance_flatten_1, 
-                               disappearance_flatten_1, 
+    mergedOut = Concatenate()([ 
                                model_all.output, 
                                model_diff.output
                               ])
@@ -338,9 +388,9 @@ def Regression_Model(num_of_bins, num_of_bins_diff, trig=False):
         out_delta = Dense(2, activation='linear', name = "out_delta")(dense_5)
         out_theta23 = Dense(1, activation='relu', name = "out_theta23")(dense_5)
 
-    regression_model = Model(inputs=[appearance_inputs, disappearance_inputs, model_all.input, model_diff.input], 
+    regression_model = Model(inputs=[model_all.input, model_diff.input], 
                              outputs=[out_delta, out_theta23], 
-                             name = 'Model_6')
+                             name = 'Model_7')
 
 
 #     model_opt = keras.optimizers.Adadelta()
@@ -411,7 +461,8 @@ model = Regression_Model( 144, 72,trig=True)
 
 
 model.summary()
-#======================================================#
+# ======================================================#
+
 
 
 
@@ -449,22 +500,27 @@ for i in tqdm(range(0,300,1)):
     x_train_poisson = np.random.poisson(x_train)
     
 #     x_train_poisson = scaler.transform(x_train_poisson) #11/08 night modified 
+
+    """
+    #11/09 night modified 
+    """
+# #     ==============================================================================
+#     appearance_x_train_poisson = x_train_poisson[:,:72]
+#     appearance_x_train_poisson = appearance_x_train_poisson.reshape(len(appearance_x_train_poisson),2,36)
+#     appearance_x_train_poisson = np.array([ element.T for element in appearance_x_train_poisson])
     
-    appearance_x_train_poisson = x_train_poisson[:,:72]
-    appearance_x_train_poisson = appearance_x_train_poisson.reshape(len(appearance_x_train_poisson),2,36)
-    appearance_x_train_poisson = np.array([ element.T for element in appearance_x_train_poisson])
-    
-    disappearance_x_train_poisson = x_train_poisson[:,72:]
-    disappearance_x_train_poisson = disappearance_x_train_poisson.reshape(len(disappearance_x_train_poisson),2,36)
-    disappearance_x_train_poisson = np.array([ element.T for element in disappearance_x_train_poisson])
-    
+#     disappearance_x_train_poisson = x_train_poisson[:,72:]
+#     disappearance_x_train_poisson = disappearance_x_train_poisson.reshape(len(disappearance_x_train_poisson),2,36)
+#     disappearance_x_train_poisson = np.array([ element.T for element in disappearance_x_train_poisson])
+# #     ==============================================================================
+
     # spetcrum_diff: (nu_e - nu_ebar), (nu_mu-nu_mubar)
     spetcrum_diff = np.column_stack([(x_train_poisson[:,:36] - x_train_poisson[:,36:72]),(x_train_poisson[:,72:108] - x_train_poisson[:,108:144])])  #11/09 modified 
     
     
     logging.info("\n")
-    logging.info("appearance_x_train_poisson shape: {}".format(appearance_x_train_poisson.shape))
-    logging.info("disappearance_x_train_poisson shape: {}".format(disappearance_x_train_poisson.shape))
+#     logging.info("appearance_x_train_poisson shape: {}".format(appearance_x_train_poisson.shape))   #11/09 night modified 
+#     logging.info("disappearance_x_train_poisson shape: {}".format(disappearance_x_train_poisson.shape))  #11/09 night modified
     logging.info("x_train_poisson shape: {}".format(x_train_poisson.shape))  #11/09 modified 
     logging.info("spetcrum_diff shape: {}".format(spetcrum_diff.shape))      #11/09 modified 
     logging.info("\n")
@@ -480,7 +536,7 @@ for i in tqdm(range(0,300,1)):
     """
     check_list=[]
     csv_logger = CSVLogger("./Training_loss/" + str(experiment) + "_" + 
-                           "training_log_poisson_" +str(i)+ "_6.csv")
+                           "training_log_poisson_" +str(i)+ "_7.csv")
 
 
     check_list.append(csv_logger)
@@ -490,7 +546,8 @@ for i in tqdm(range(0,300,1)):
 #              x_train_poisson, # 11/08 modified
 #                y_train, # 11/05 modified
 #               [appearance_x_train_poisson, disappearance_x_train_poisson], # 11/08 modified
-              [appearance_x_train_poisson, disappearance_x_train_poisson, x_train_poisson, spetcrum_diff], # 11/09 modified
+#               [appearance_x_train_poisson, disappearance_x_train_poisson, x_train_poisson, spetcrum_diff], # 11/09 modified
+              [x_train_poisson, spetcrum_diff],  #11/09 night modified
               [y_train_delta, y_train_theta23],  # 11/05 modified
                validation_split = 0.1,
                batch_size=64,
@@ -501,7 +558,7 @@ for i in tqdm(range(0,300,1)):
              )
 
     model.save("./Model/" + str(experiment) + "_" + 
-                           "poisson_" + str(i)+ "_6.h5")
+                           "poisson_" + str(i)+ "_7.h5")
 #======================================================#
     
 
