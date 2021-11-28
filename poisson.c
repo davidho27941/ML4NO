@@ -6,7 +6,7 @@
   #include <sys/time.h>
   #include <time.h>
 
-  #include <globes/globes.h>   /* GLoBES library */
+  #include <globes/globes.h>   /* GLoBES library */ 
 
   #include <gsl/gsl_math.h>    /* GNU Scientific library (required for root finding) */
   #include <gsl/gsl_roots.h>
@@ -347,87 +347,7 @@ int do_poisson_fluctuation(glb_params test_values)
     }
       }
   } 
-  //printf("\n");
-
-  // //printf("\n vebar_dune_poisson_65 = %g\n ",vebar_dune_poisson[65]);
-  // int ew_low9, ew_high9, r; 
-  // glbGetEnergyWindowBins(0, 3, &ew_low9, &ew_high9);
-  // for (r=ew_low9 ;r <= ew_high9; r++) {
-  // printf("%g ",vubar_dune_poisson[r]);
-  // //printf("%d ",r);
-  // }  
-  // printf("\n"); 
-
-
-  // int index;
-  // for (int exp=0; exp <= 1; exp++){
-  //     int rule_max= glbGetNumberOfRules(exp);
-  //     for (int rule = 0; rule < rule_max; rule++){
-  //       glbGetEnergyWindowBins(exp, rule, &ew_low, &ew_high);
-  //     // printf("ew_low = %d, ew_high = %d ",ew_low,ew_high);
-  //   //以下開始判斷是哪個Spectrum
-  //       index = 10*exp + rule;
-  //       switch(index){
-  //           case 0 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             ve_dune_poisson[i] = random_poisson(ve_dune[i]);
-  //             //printf("%g ",ve_dune_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //           case 1 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             vebar_dune_poisson[i] = random_poisson(vebar_dune[i]);
-  //             //printf("%g ",vebar_dune_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //           case 2 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             vu_dune_poisson[i] = random_poisson(vu_dune[i]);
-  //             //printf("%g ",vu_dune_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //           case 3 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             vubar_dune_poisson[i] = random_poisson(vubar_dune[i]);
-  //             //printf("%g ",vubar_dune_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //           case 10 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             ve_t2hk_poisson[i] = random_poisson(ve_t2hk[i]);
-  //             //printf("%g ",ve_t2hk_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //           case 11 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             vu_t2hk_poisson[i] = random_poisson(vu_t2hk[i]);
-  //             //printf("%g ",vu_t2hk_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //           case 12 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             vebar_t2hk_poisson[i] = random_poisson(vebar_t2hk[i]);
-  //             //printf("%g ",vebar_t2hk_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //           case 13 :
-  //             for (i=ew_low; i <= ew_high; i++) {
-  //             vubar_t2hk_poisson[i] = random_poisson(vubar_t2hk[i]);
-  //             //printf("%g ",vubar_t2hk_poisson[i]);
-  //             // printf("%d ",i);
-  //             }
-  //             break;
-  //       }
-  //     }
-  // } 
-
+ 
 
   return 0;
 }
@@ -638,43 +558,6 @@ double delta_chi2 (double CP , double MO , double deltacp, int EXP) //根據CP�
         chi_0_NO = glbChiNP(test_values_cpc_0_NO, minimum ,EXP);
         // glbPrintParams(stdout,minimum); //////////
         printf("chi_0_NO = %g \n",chi_0_NO);
-                                                              //      glbSetOscillationParameters(minimum);
-                                                              //      glbSetRates();
-                                                              //                         print_one_spectrum(0,1) ;
-
-                                                              // double fit_rate;
-                                                              // double chi2_dune = 0;
-                                                              // int ew_low, ew_high, k;
-                                                              // // double *signal_fit_rate = glbGetSignalFitRatePtr(0, 0);
-                                                              // // double *bg_fit_rate     = glbGetBGFitRatePtr(0, 0);
-                                                              // // glbGetEnergyWindowBins(0, 0, &ew_low, &ew_high);
-                                                              // // for (k=ew_low; k <= ew_high; k++) {
-                                                              // // fit_rate = signal_fit_rate[k] + bg_fit_rate[k];
-                                                              // // chi2_dune += poisson_likelihood(ve_dune_poisson[k], fit_rate);} 
-
-                                                              // double *signal_fit_rate1 = glbGetSignalFitRatePtr(0, 1);
-                                                              // double *bg_fit_rate1     = glbGetBGFitRatePtr(0, 1);
-                                                              // glbGetEnergyWindowBins(0, 1, &ew_low, &ew_high);
-                                                              // for (k=ew_low; k <= ew_high; k++) {
-                                                              // fit_rate = signal_fit_rate1[k] + bg_fit_rate1[k];
-                                                              // // printf("%g ",fit_rate);
-                                                              // chi2_dune += poisson_likelihood(vebar_dune_poisson[k], fit_rate);}    
-                                                              // printf("\n");
-
-                                                              // // double *signal_fit_rate2 = glbGetSignalFitRatePtr(0, 2);
-                                                              // // double *bg_fit_rate2     = glbGetBGFitRatePtr(0, 2);
-                                                              // // glbGetEnergyWindowBins(0, 2, &ew_low, &ew_high);
-                                                              // // for (k=ew_low; k <= ew_high; k++) {
-                                                              // // fit_rate = signal_fit_rate2[k] + bg_fit_rate2[k];
-                                                              // // chi2_dune += poisson_likelihood(vu_dune_poisson[k], fit_rate);}    
-
-                                                              // // double *signal_fit_rate3 = glbGetSignalFitRatePtr(0, 3);
-                                                              // // double *bg_fit_rate3     = glbGetBGFitRatePtr(0, 3);
-                                                              // // glbGetEnergyWindowBins(0, 3, &ew_low, &ew_high);
-                                                              // // for (k=ew_low; k <= ew_high; k++) {
-                                                              // // fit_rate = signal_fit_rate3[k] + bg_fit_rate3[k];
-                                                              // // chi2_dune += poisson_likelihood(vubar_dune_poisson[k], fit_rate);}    
-                                                              // printf("chi2_of_v_dune = %g \n",chi2_dune);                                                              
 
       /* 計算Chi square under cpc_pi_NO */ 
         glbSetProjection(projection_cp_fixed); //設定Projection deltacp_Fixed
@@ -797,20 +680,6 @@ int main(int argc, char *argv[])
     printf("%s\n",path);
     //FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
     FILE* OUT =  fopen(path,"w");//建立輸出檔案
-
-  // /* 設定輸出檔案位置 */ 
-    // int len = strlen("two_delta_chi2_distribution_angle")
-    //                         + strlen(argv[1]) + strlen("_part") + strlen(argv[4]) + strlen(".dat") + 1;
-    // char path[len];
-    // strcpy(path,"two_delta_chi2_distribution_angle");
-    // strcat(path, argv[1]);
-    // strcat(path, "_part");
-    // strcat(path, argv[4]);
-    // strcat(path, ".dat");
-
-    // printf("%s\n",path);
-    // FILE* OUT =  fopen("two_delta_chi2_distribution.dat","w");//建立輸出檔案
-    // //FILE* OUT =  fopen(path,"w");//建立輸出檔案
 
 
 double angle = atof(argv[1]);

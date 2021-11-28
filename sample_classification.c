@@ -3,7 +3,7 @@
 /* theta23, theta13, m31 flat distribution in 3 sigma range */
 /* deltacp flat distribution in 0~360 , # at 0 & 180 account for 50% */
 
-/* 使用方式(產100K組) :  ./sample_classification 1000000   */
+/* 使用方式(產1000K組) :  ./sample_classification 10000000   */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -113,7 +113,6 @@ int LABEL_MO(double x)
 if(x>0) {return 1;}
 else {return -1;}
 }
-
 
 
 int main(int argc, char *argv[])

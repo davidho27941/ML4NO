@@ -35,6 +35,7 @@ vubar_t2hk_poisson : 12
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_spline.h>
 
+
  double degree    = M_PI/180;
 /***************************************************************************
  *                            M A I N   P R O G R A M                      *
@@ -230,9 +231,9 @@ int main(int argc, char *argv[])
   glbGetEnergyWindowBins(exp, channel, &ew_low, &ew_high);
   
   double *true_rates = glbGetRuleRatePtr(exp, channel);
-int count = 0;
+  int count = 0;
 
-  for (i=ew_low; i <= ew_high; i++){fprintf(OUT,"%g ",true_rates[i]);
+  for (i=ew_low; i <= ew_high; i++){fprintf(OUT,"%f ",true_rates[i]);
   count += 1;
   }
   //printf("count = %d \n",count);
@@ -242,8 +243,9 @@ int count = 0;
 
     // double chi2;
     // chi2=glbChiSys(test_values,GLB_ALL,GLB_ALL);
-    fprintf(OUT,"  %g %g %g %g %g %g %i %i %i\n",theta12_c,theta13,theta23,deltacp,sdm_c,ldm,OCTANT,CPV,MO);
+    fprintf(OUT,"  %f %f %f %f %f %f %i %i %i\n",theta12_c,theta13,theta23,deltacp,sdm_c,ldm,OCTANT,CPV,MO);
     printf("%i \n",location);  
+    
   }
   /* Clean up */
   glbFreeParams(true_values);
