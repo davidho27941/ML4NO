@@ -17,16 +17,17 @@
 
  double degree    = M_PI/180;
  double t;
+ 
 /* Define Poisson True Value Spectrum */
-  double ve_dune_poisson[70];
-  double vebar_dune_poisson[70];
-  double vu_dune_poisson[70];
-  double vubar_dune_poisson[70];
+  double ve_dune_poisson[70];    //66
+  double vebar_dune_poisson[70]; //66
+  double vu_dune_poisson[70];    //66
+  double vubar_dune_poisson[70]; //66
 
-  double ve_t2hk_poisson[8];
-  double vu_t2hk_poisson[12];
-  double vebar_t2hk_poisson[8];
-  double vubar_t2hk_poisson[12];
+  double ve_t2hk_poisson[8];      //8
+  double vu_t2hk_poisson[12];     //12
+  double vebar_t2hk_poisson[8];   //8
+  double vubar_t2hk_poisson[12];  //12
 
 float keithRandom() {
     // Random number function based on the GNU Scientific Library
