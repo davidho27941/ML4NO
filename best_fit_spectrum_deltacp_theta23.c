@@ -17,7 +17,7 @@
 
  double degree    = M_PI/180;
  double t;
- 
+
 /* Define Poisson True Value Spectrum */
   double ve_dune_poisson[70];    //66
   double vebar_dune_poisson[70]; //66
@@ -414,7 +414,7 @@ double chi2_poisson(int exp, int rule, int np, double *x, double *errors, void* 
 
 /* 計算chi2 with projection onto deltacp, 4 conditions for test value (0,NO) (pi,NO) (0,IO) (pi,IO) */ 
 //參數:{系統誤差on_off:[GLB_ON,GLB_OFF], 選定實驗EXP:[0,1,GLB_ALL], true value的deltacp}
-double chi2_proj (int on_off, int EXP , double deltacp, double theta23, double fit_values[10])
+double chi2_proj (int on_off, int EXP , int MO , double deltacp, double theta23, double fit_values[10])
 {
     glb_params test_values = glbAllocParams(); 
     glb_params true_values = glbAllocParams(); 
@@ -424,9 +424,17 @@ double chi2_proj (int on_off, int EXP , double deltacp, double theta23, double f
     glb_params fit_values_I = glbAllocParams(); 
     clock_t t1, t2;
 
+  if(MO == 1){
   /* 定義true value (依照NO) */ 
     glbDefineParams(true_values,theta12_N*degree,theta13_N*degree,theta23*degree, deltacp*degree ,1e-5*sdm_g_N,1e-3*ldm_g_N);
     glbSetDensityParams(true_values,1.0,GLB_ALL);
+  }
+
+  if(MO == -1){
+  /* 定義true value (依照IO) */ 
+    glbDefineParams(true_values,theta12_I*degree,theta13_I*degree,theta23*degree, deltacp*degree ,1e-5*sdm_g_I,1e-3*ldm_g_I);
+    glbSetDensityParams(true_values,1.0,GLB_ALL);
+  }
  
   /* 對True Value Spectrum 做Poisson Fluctuation */
     do_poisson_fluctuation(true_values);
@@ -519,19 +527,34 @@ int main(int argc, char *argv[])
 char *filename;
 
 if (atof(argv[1]) == 0){
-    filename = "best_fit_spectrum_deltacp_theta23_DUNE.dat";//建立輸出檔案
+  if (atof(argv[2]) == 1){
+    filename = "best_fit_spectrum_deltacp_theta23_DUNE_NO.dat";//建立輸出檔案
+  }
+  if (atof(argv[2]) == -1){
+    filename = "best_fit_spectrum_deltacp_theta23_DUNE_IO.dat";//建立輸出檔案
+  }
 }
 else if (atof(argv[1]) == 1){
-    filename = "best_fit_spectrum_deltacp_theta23_T2HK.dat";//建立輸出檔案
+  if (atof(argv[2]) == 1){
+    filename = "best_fit_spectrum_deltacp_theta23_T2HK_NO.dat";//建立輸出檔案
+  }
+  if (atof(argv[2]) == -1){
+    filename = "best_fit_spectrum_deltacp_theta23_T2HK_IO.dat";//建立輸出檔案
+  }
 }
 else if (atof(argv[1]) == -1){
-    filename = "best_fit_spectrum_deltacp_theta23_DUT2.dat";//建立輸出檔案
+  if (atof(argv[2]) == 1){
+    filename = "best_fit_spectrum_deltacp_theta23_DUT2_NO.dat";//建立輸出檔案
+  }
+  if (atof(argv[2]) == -1){
+    filename = "best_fit_spectrum_deltacp_theta23_DUT2_IO.dat";//建立輸出檔案
+  }
 }
 
 FILE* OUT =  fopen(filename,"w");
 
   int location;
-  int TOTALsample = atof(argv[2]);
+  int TOTALsample = atof(argv[3]);
   double fit_values[10];
   double chi_square;
   for (location=0;location<TOTALsample;location++){
@@ -542,7 +565,7 @@ FILE* OUT =  fopen(filename,"w");
   double theta23 = (45 + 45)/2 + (keithRandom()-0.5)*(50-40);
 
   /* Calculate Chi2*/
-  chi_square = chi2_proj(GLB_OFF, atof(argv[1]),  deltacp, theta23, fit_values);   // 0代表DUNE, 1代表T2HK
+  chi_square = chi2_proj(GLB_OFF, atof(argv[1]), atof(argv[2]),  deltacp, theta23, fit_values);   // 0代表DUNE, 1代表T2HK
   
   /* Relocate fit_deltacp to 0-2pi range */
   if(fit_values[3] > 2*M_PI){
@@ -557,8 +580,16 @@ FILE* OUT =  fopen(filename,"w");
     fit_values[3] = fit_values[3]+run*2*M_PI;
     }
   
-  fprintf(OUT,"%g %g %g %g %g %g %g %g %g %g %g %g %g %g ",theta12_N*degree,theta13_N*degree,theta23*degree, deltacp ,1e-5*sdm_g_N,1e-3*ldm_g_N,
-  chi_square,fit_values[0],fit_values[1],fit_values[2],fit_values[3]/degree,fit_values[4],fit_values[5],t);
+  if (atof(argv[2]) == 1){
+    fprintf(OUT,"%g %g %g %g %g %g %g %g %g %g %g %g %g %g ",theta12_N*degree,theta13_N*degree,theta23*degree, deltacp ,1e-5*sdm_g_N,1e-3*ldm_g_N,
+    chi_square,fit_values[0],fit_values[1],fit_values[2],fit_values[3]/degree,fit_values[4],fit_values[5],t);
+  }
+  if (atof(argv[2]) == -1){
+    fprintf(OUT,"%g %g %g %g %g %g %g %g %g %g %g %g %g %g ",theta12_I*degree,theta13_I*degree,theta23*degree, deltacp ,1e-5*sdm_g_I,1e-3*ldm_g_I,
+    chi_square,fit_values[0],fit_values[1],fit_values[2],fit_values[3]/degree,fit_values[4],fit_values[5],t);
+  }
+
+
   
 
   int ew_low, ew_high, i;
@@ -634,3 +665,4 @@ FILE* OUT =  fopen(filename,"w");
 }
 
 
+// 使用方式：./best_fit_spectrum_deltacp_theta23 [EXP = 0,1,-1] [MO = 1,-1] [Total Sample Number]
