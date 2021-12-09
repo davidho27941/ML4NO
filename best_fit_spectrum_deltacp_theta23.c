@@ -660,7 +660,7 @@ FILE* OUT =  fopen(filename,"w");
   }
 
   t_end = clock();
-  fprintf(OUT,"程式總計算時間 %f secs\n", (double)(t_end - t_start)/CLOCKS_PER_SEC);
+  //fprintf(OUT,"程式總計算時間 %f secs\n", (double)(t_end - t_start)/CLOCKS_PER_SEC);
   return 0;  
 }
 

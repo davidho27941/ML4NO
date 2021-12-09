@@ -513,7 +513,18 @@ int main(int argc, char *argv[])
     glbInitExperiment("./HK_globes/HK_combined_coarse.glb",&glb_experiment_list[0],&glb_num_of_exps);
 
 
-FILE* OUT =  fopen("best_fit_spectrum_deltacp_theta23_grid_mse.dat","w");
+
+  /* 設定輸出檔案位置 方式1*/ 
+    // int len = strlen("./sample_grid/best_fit_spectrum_deltacp_theta23_grid_mse_ver") + strlen(argv[3]) + strlen(".dat") + 1;
+    // char path[len];
+    // strcpy(path,"./sample_grid/best_fit_spectrum_deltacp_theta23_grid_mse_ver");
+    // strcat(path, argv[3]);
+    // strcat(path, ".dat");
+    // printf("File Path : %s\n",path);
+    // FILE* OUT =  fopen(path,"w");//建立輸出檔案
+
+  /* 設定輸出檔案位置 方式2*/   
+  FILE* OUT =  fopen("best_fit_spectrum_deltacp_theta23_grid_mse.dat","w");
 
   double fit_values[10];
   double chi_square;
@@ -525,6 +536,9 @@ FILE* OUT =  fopen("best_fit_spectrum_deltacp_theta23_grid_mse.dat","w");
   double theta23_initial;
   double deltacp_initial;
   /* Calculate Chi2 in different Grids*/
+  clock_t t1, t2;
+  double t;
+  t1 = clock();
   for (int i = 4000; i <= 5000; i += 25 ){
     theta23_initial = i/100.000;
     for (int j =0; j <= 360; j += 9){
@@ -556,13 +570,120 @@ FILE* OUT =  fopen("best_fit_spectrum_deltacp_theta23_grid_mse.dat","w");
       }
     }
   }
+  t2 = clock();
+  t = (double)(t2-t1)/CLOCKS_PER_SEC;
+  fprintf(OUT,"總運行時間 : %g sec",t);
   return 0;  
 }
 
 /* 
-使用方式：./best_fit_spectrum_deltacp_theta23_grid_mse [EXP = 0,1,-1] [MO = 1,-1]
+使用方式：./best_fit_spectrum_deltacp_theta23_grid_mse [EXP = 0,1,-1] [MO = 1,-1] [Version: 1,2,3......]
 Output dat 格式 : 
 [theta12_true, theta13_true, theta23_true(random), deltacp_true(random), sdm_true, sdm_true,
 theta23_initial, deltacp_initial,chi2,
 theta12_fit, theta13_fit, theta23_fit, deltacp_fit, sdm_fit, sdm_fit]
+
+for i in range(25):
+    print("nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 " +str(i+1)+ " > 1207.log &")
+
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 1 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 2 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 3 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 4 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 5 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 6 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 7 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 8 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 9 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 10 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 11 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 12 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 13 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 14 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 15 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 16 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 17 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 18 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 19 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 20 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 21 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 22 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 23 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 24 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 25 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 26 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 27 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 28 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 29 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 30 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 31 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 32 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 33 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 34 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 35 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 36 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 37 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 38 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 39 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 40 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 41 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 42 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 43 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 44 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 45 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 46 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 47 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 48 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 49 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 50 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 51 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 52 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 53 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 54 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 55 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 56 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 57 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 58 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 59 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 60 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 61 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 62 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 63 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 64 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 65 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 66 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 67 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 68 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 69 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 70 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 71 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 72 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 73 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 74 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 75 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 76 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 77 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 78 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 79 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 80 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 81 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 82 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 83 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 84 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 85 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 86 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 87 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 88 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 89 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 90 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 91 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 92 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 93 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 94 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 95 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 96 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 97 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 98 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 99 > 1207.log &
+nohup ./best_fit_spectrum_deltacp_theta23_grid_mse -1 1 100 > 1207.log &
 */
