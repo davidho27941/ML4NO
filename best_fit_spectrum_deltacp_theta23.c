@@ -666,3 +666,4 @@ FILE* OUT =  fopen(filename,"w");
 
 
 // 使用方式：./best_fit_spectrum_deltacp_theta23 [EXP = 0,1,-1] [MO = 1,-1] [Total Sample Number]
+//
