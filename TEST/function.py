@@ -324,7 +324,7 @@ def prediction_function(x_test : np.ndarray = 0, model : str = "VAE_1DCNN_v1")->
     #Regression_Model_Fully_Connected_Dense_std 
     elif model == "Regression_Model_Fully_Connected_Dense_std":
 
-        model = load_model("./Model/poisson_20.h5", compile=False)
+        model = load_model("./Model/poisson_30.h5", compile=False)
         prediction = model.predict(x_test)
         
         
