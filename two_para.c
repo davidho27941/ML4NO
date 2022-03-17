@@ -28,19 +28,31 @@ double my_prior(const glb_params in, void* user_data)//Mark
     double pv = 0.0;
     double fitvalue,centralvalue,inputerror;
 
+    /*
+     theta12     0    FIXED
+     theta13    1  
+     theta23:  2
+     deltacp   3
+     sdm  4           FIXED
+     ldm 5
+
+     emu    25
+     etau:  27
+     mumu   29
+     */
 
     /*impose the absolute value of off-diagonal terms to be positive */
 
-if(glbGetProjectionFlag(p,25)==GLB_FREE){if(fabs(glbGetOscParams(in,25))>1) {glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e6;}}
-if(glbGetProjectionFlag(p,27)==GLB_FREE){if(fabs(glbGetOscParams(in,27))>1) {glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e6;}}
-if(glbGetProjectionFlag(p,30)==GLB_FREE){if(fabs(glbGetOscParams(in,30))>1) {glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e6;}}
+if(glbGetProjectionFlag(p,25)==GLB_FREE){if(fabs(glbGetOscParams(in,25))>1) {glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e10;}}
+if(glbGetProjectionFlag(p,27)==GLB_FREE){if(fabs(glbGetOscParams(in,27))>1) {glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e10;}}
+if(glbGetProjectionFlag(p,29)==GLB_FREE){if(fabs(glbGetOscParams(in,30))>1) {glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e10;}}
 
 
     //restriction on theta13 theta23
-if(glbGetProjectionFlag(p,1)==GLB_FREE){if((glbGetOscParams(in,1)<8.2*degree)||(glbGetOscParams(in,1)>8.97*degree)){glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e6;}}    
-if(glbGetProjectionFlag(p,2)==GLB_FREE){if((glbGetOscParams(in,2)<38.9*degree)||(glbGetOscParams(in,2)>51.1*degree)){glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p);return 1e6;} }   
+if(glbGetProjectionFlag(p,1)==GLB_FREE){if((glbGetOscParams(in,1)<8.2*degree)||(glbGetOscParams(in,1)>8.97*degree)){glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p); return 1e10;}}    
+if(glbGetProjectionFlag(p,2)==GLB_FREE){if((glbGetOscParams(in,2)<38.9*degree)||(glbGetOscParams(in,2)>51.1*degree)){glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p);return 1e10;} }   
     //prior for DM31 for both hierarchy
-if(glbGetProjectionFlag(p,5)==GLB_FREE){if((fabs(glbGetOscParams(in,5))<2.431e-3)||(fabs(glbGetOscParams(in,5))>2.598e-3)){glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p);return 1e6;}}    
+if(glbGetProjectionFlag(p,5)==GLB_FREE){if((fabs(glbGetOscParams(in,5))<2.431e-3)||(fabs(glbGetOscParams(in,5))>2.598e-3)){glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p);return 1e10;}}    
 
 
  glbFreeParams(central_values); glbFreeParams(input_errors); glbFreeProjection(p);
@@ -75,25 +87,25 @@ void SetParaNode( int i, int key, char para_name[], float lower_limit_true, floa
   paras[i].step_test = step_test;
 }
 
-// void ParaInit() {
-//   SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.1 *degree, 0 , 0 , 0 );
-//   SetParaNode( 1, 2, "theta23", 35 *degree, 55 *degree,  0.25 *degree, 40 *degree, 50.1 *degree,  5 *degree);
-//   SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  10 *degree,   0 *degree , 360*degree, 45 *degree);
-//   SetParaNode( 3, 5, "ldm" , 2.431e-3 , 2.598e-3, 0.01e-3, -2.525e-3 , 2.526e-3, 2.525e-3*2);
-//   SetParaNode( 4, 25, "emu" , -1, 1, 0.1 , -1, 1, 0.1);
-//   SetParaNode( 5, 27, "etau", -1, 1, 0.1 , -1, 1, 0.1);
-//   SetParaNode( 6, 29, "mumu", -1, 1, 0.1 , -1, 1, 0.1);
-// } 
-
 void ParaInit() {
-  SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.0077 *degree, 0 , 0 , 0 );
-  SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree, 40 *degree, 50.1 *degree,  5 *degree);
-  SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree,   0 *degree , 360*degree, 90 *degree);
-  SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.525e-3 , 2.526e-3, 2.525e-3*2);
-  SetParaNode( 4, 25, "emu" , -0.5, 0.5+ 1e-5, 0.01 , 0, 1, 1);
-  SetParaNode( 5, 27, "etau", -0.5, 0.5+ 1e-5, 0.01 , 0, 1, 1);
-  SetParaNode( 6, 29, "mumu", -0.5, 0.5+ 1e-5, 0.01 , 0, 1, 1);
+  SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.0077 *degree*10, 0 , 0 , 0 );
+  SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree*10, 40 *degree, 50.1 *degree,  5 *degree);
+  SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree*10,   0 *degree , 360*degree, 90 *degree);
+  SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.514e-3 , 2.515e-3, 2.514e-3*2);
+  SetParaNode( 4, 25, "emu" , -1, 1+ 1e-5, 0.02*10 , 0, 1, 1);
+  SetParaNode( 5, 27, "etau", -1, 1+ 1e-5, 0.02*10 , 0, 1, 1);
+  SetParaNode( 6, 29, "mumu", -1, 1+ 1e-5, 0.02*10 , 0, 1, 1);
 } 
+
+// void ParaInit() {
+//   SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.0077 *degree, 0 , 0 , 0 );
+//   SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree, 40 *degree, 50.1 *degree,  5 *degree);
+//   SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree,   0 *degree , 360*degree, 90 *degree);
+//   SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.514e-3 , 2.515e-3, 2.514e-3*2);
+//   SetParaNode( 4, 25, "emu" , -1, 1+ 1e-5, 0.02 , 0, 1, 1);
+//   SetParaNode( 5, 27, "etau", -1, 1+ 1e-5, 0.02 , 0, 1, 1);
+//   SetParaNode( 6, 29, "mumu", -1, 1+ 1e-5, 0.02 , 0, 1, 1);
+// } 
 
 ParaNode findPara( int key ) {
   for ( int i = 0 ; i < 7 ; i++ ) {
@@ -148,9 +160,9 @@ int main(int argc, char *argv[])
     
     /* Define true oscillation parameters */ //Mark
     double theta12, theta13, theta23;
-    double sdm       = 7.39e-5;
-    double ldm       = 2.525e-3;
-    double deltacp   = -90 * M_PI/180.0;;
+    double sdm       = 0.0;
+    double ldm       = 0.0;
+    double deltacp   = 0.0;;
     double ee        = 0.0;
     double mumu      = 0.0;
     double tautau    = 0.0;
@@ -217,10 +229,6 @@ int main(int argc, char *argv[])
     
     /* Define "test" oscillation parameter vector */
     glb_params test_values = glbAllocParams();
-    glb_params out         = glbAllocParams();
-    glb_params out_temp    = glbAllocParams();
-    glb_params mini_0      = glbAllocParams();
-    glb_params mini        = glbAllocParams();
 
     
     /*initialise the prior*/
@@ -261,11 +269,10 @@ int main(int argc, char *argv[])
     glbSetProjectionFlag(projection, GLB_FREE,2);
     glbSetProjectionFlag(projection, GLB_FREE,3);
     glbSetProjectionFlag(projection, GLB_FREE,5);
-    glbSetProjectionFlag(projection, GLB_FREE,29);
 
     glbSetProjectionFlag(projection, GLB_FREE,25); 
     glbSetProjectionFlag(projection, GLB_FREE,27);
-     
+    glbSetProjectionFlag(projection, GLB_FREE,29);  
 
     glbSetProjectionFlag(projection, GLB_FIXED,para1);
     glbSetProjectionFlag(projection, GLB_FIXED,para2);
@@ -292,11 +299,11 @@ void Many_test( int para1, int para2, double *min ) {
       for ( double d2 = test2.lower_limit_test ; d2 < test2.upper_limit_test ; d2+= test2.step_test ){
         glbSetOscParams(test_values, d2, test2.key);
         for ( double d3 = test3.lower_limit_test ; d3 < test3.upper_limit_test ; d3+= test3.step_test ) {
-          glbSetOscParams(test_values, d3, test2.key);
+          glbSetOscParams(test_values, d3, test3.key);
           for ( double d4 = test4.lower_limit_test ; d4 < test4.upper_limit_test ; d4+= test4.step_test ) {
-            glbSetOscParams(test_values, d4, test2.key);
+            glbSetOscParams(test_values, d4, test4.key);
             for ( double d5 = test5.lower_limit_test ; d5 < test5.upper_limit_test ; d5+= test5.step_test ) {
-              glbSetOscParams(test_values, d5, test2.key);
+              glbSetOscParams(test_values, d5, test5.key);
               res=glbChiNP(test_values,NULL,GLB_ALL);
               if(res<*min)
                 *min=res;
@@ -316,9 +323,9 @@ else {
       for ( double d2 = test2.lower_limit_test ; d2 < test2.upper_limit_test ; d2+= test2.step_test ){
         glbSetOscParams(test_values, d2, test2.key);
         for ( double d3 = test3.lower_limit_test ; d3 < test3.upper_limit_test ; d3+= test3.step_test ) {
-          glbSetOscParams(test_values, d3, test2.key);
+          glbSetOscParams(test_values, d3, test3.key);
           for ( double d4 = test4.lower_limit_test ; d4 < test4.upper_limit_test ; d4+= test4.step_test ) {
-            glbSetOscParams(test_values, d4, test2.key);
+            glbSetOscParams(test_values, d4, test4.key);
             res=glbChiNP(test_values,NULL,GLB_ALL);
             if(res<*min)
               *min=res;
@@ -352,3 +359,21 @@ else {
     
     return 0;
 }
+
+/*
+nohup ./two_para 1 2 2 > 0313.log &
+nohup ./two_para 1 3 2 > 0313.log &
+nohup ./two_para 1 25 2 > 0313.log &
+nohup ./two_para 1 27 2 > 0313.log &
+nohup ./two_para 1 29 2 > 0313.log &
+nohup ./two_para 2 3 2 > 0313.log &
+nohup ./two_para 2 25 2 > 0313.log &
+nohup ./two_para 2 27 2 > 0313.log &
+nohup ./two_para 2 29 2 > 0313.log &
+nohup ./two_para 3 25 2 > 0313.log &
+nohup ./two_para 3 27 2 > 0313.log &
+nohup ./two_para 3 29 2 > 0313.log &
+nohup ./two_para 25 27 2 > 0313.log &
+nohup ./two_para 25 29 2 > 0313.log &
+nohup ./two_para 27 29 2 > 0313.log &
+*/
