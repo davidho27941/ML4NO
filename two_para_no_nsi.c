@@ -73,7 +73,7 @@ typedef struct ParaNode{
   float step_test;
 }ParaNode;
 
-ParaNode paras[7];
+ParaNode paras[4];
 
 void SetParaNode( int i, int key, char para_name[], float lower_limit_true, float upper_limit_true, float step_true,
                      float lower_limit_test, float upper_limit_test, float step_test ) {
@@ -92,9 +92,6 @@ void SetParaNode( int i, int key, char para_name[], float lower_limit_true, floa
 //   SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree*10, 40 *degree, 50.1 *degree,  5 *degree);
 //   SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree*10,   0 *degree , 360*degree, 90 *degree);
 //   SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.514e-3 , 2.515e-3, 2.514e-3*2);
-//   SetParaNode( 4, 25, "emu" , -1, 1+ 1e-5, 0.02*10 , 0, 1, 1);
-//   SetParaNode( 5, 27, "etau", -1, 1+ 1e-5, 0.02*10 , 0, 1, 1);
-//   SetParaNode( 6, 29, "mumu", -1, 1+ 1e-5, 0.02*10 , 0, 1, 1);
 // } 
 
 void ParaInit() {
@@ -102,13 +99,10 @@ void ParaInit() {
   SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree, 40 *degree, 50.1 *degree,  5 *degree);
   SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree,   0 *degree , 360*degree, 90 *degree);
   SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.514e-3 , 2.515e-3, 2.514e-3*2);
-  SetParaNode( 4, 25, "emu" , -1, 1+ 1e-5, 0.02 , 0, 1, 1);
-  SetParaNode( 5, 27, "etau", -1, 1+ 1e-5, 0.02 , 0, 1, 1);
-  SetParaNode( 6, 29, "mumu", -1, 1+ 1e-5, 0.02 , 0, 1, 1);
 } 
 
 ParaNode findPara( int key ) {
-  for ( int i = 0 ; i < 7 ; i++ ) {
+  for ( int i = 0 ; i < 4 ; i++ ) {
     if ( paras[i].key == key )
       return paras[i];
   } // for
@@ -118,7 +112,7 @@ ParaNode findPara( int key ) {
 }
 
 ParaNode findNotTwoPara( int key1, int key2, int testNum ) {
-  for ( int i = 0 ; i < 7 ; i++ ) {
+  for ( int i = 0 ; i < 4 ; i++ ) {
     if ( paras[i].key != key1 && paras[i].key != key2 ) {
       testNum--;
       if ( testNum == 0 )
@@ -143,7 +137,7 @@ int main(int argc, char *argv[])
     int version = atof(argv[3]);
 
     char output[256];
-    sprintf(output,"./output/ver%i_chi_%s_%s.dat",version ,findPara(para1).para_name,findPara(para2).para_name);
+    sprintf(output,"./output/ver%i_chi_%s_%s_no_nsi.dat",version ,findPara(para1).para_name,findPara(para2).para_name);
     FILE* OUT=fopen(output, "w");
 
     /* Initialize libglobes */
@@ -159,38 +153,40 @@ int main(int argc, char *argv[])
                                  NULL);
     
     /* Define true oscillation parameters */ //Mark
-    double theta12, theta13, theta23;
-    double sdm       = 0.0;
-    double ldm       = 0.0;
-    double deltacp   = 0.0;;
+    double theta12 = 3.344e1;
+    double theta13 = 8.57; 
+    double theta23 = 49;
+    double deltacp   = 195;
+    double sdm       = 7.42;
+    double ldm       = 2.514;
     double ee        = 0.0;
     double mumu      = 0.0;
     double tautau    = 0.0;
     double emu       = 0.0;
     double etau      = 0.0;
     double mutau     = 0.0;
-    double phi_emu   = 0.0*M_PI;
-    double phi_etau = 0.0*M_PI;
-    double phi_mutau = 0.0*M_PI;
+    double phi_emu   = 0.0;
+    double phi_etau = 0.0;
+    double phi_mutau = 0.0;
     
     
-        FILE* fp_chans_para = fopen("./parameters/parameters","r");
-        int num_chans=0;    int ret;        
-        if (fp_chans_para == NULL) {
-            printf ("Cannot open file parameters/parameters \n");
-            exit(0);
-        }
-        char chbuf[1000];
-        num_chans=0;
-        while (!feof(fp_chans_para)) {
-            fgets(chbuf,1000,fp_chans_para);
-            if (chbuf != NULL) {/*0:MC OFF*/
-                ret = sscanf(chbuf,"%lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg",\
-                &theta12,&theta13,&theta23,&deltacp,&sdm,&ldm,&ee,&mumu,&tautau,&emu,&etau,&mutau,&phi_emu,&phi_etau,&phi_mutau);
-                num_chans++;
-            }
-        }
-        fclose(fp_chans_para);
+        // FILE* fp_chans_para = fopen("./parameters/parameters","r");
+        // int num_chans=0;    int ret;        
+        // if (fp_chans_para == NULL) {
+        //     printf ("Cannot open file parameters/parameters \n");
+        //     exit(0);
+        // }
+        // char chbuf[1000];
+        // num_chans=0;
+        // while (!feof(fp_chans_para)) {
+        //     fgets(chbuf,1000,fp_chans_para);
+        //     if (chbuf != NULL) {/*0:MC OFF*/
+        //         ret = sscanf(chbuf,"%lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg",\
+        //         &theta12,&theta13,&theta23,&deltacp,&sdm,&ldm,&ee,&mumu,&tautau,&emu,&etau,&mutau,&phi_emu,&phi_etau,&phi_mutau);
+        //         num_chans++;
+        //     }
+        // }
+        // fclose(fp_chans_para);
     
     printf("input values %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g\n",\
     theta12,theta13,theta23,deltacp,sdm,ldm,ee,mumu,tautau,emu,etau,mutau,phi_emu,phi_etau,phi_mutau);
@@ -270,9 +266,9 @@ int main(int argc, char *argv[])
     glbSetProjectionFlag(projection, GLB_FREE,3);
     glbSetProjectionFlag(projection, GLB_FREE,5);
 
-    glbSetProjectionFlag(projection, GLB_FREE,25); 
-    glbSetProjectionFlag(projection, GLB_FREE,27);
-    glbSetProjectionFlag(projection, GLB_FREE,29);  
+    // glbSetProjectionFlag(projection, GLB_FREE,25); 
+    // glbSetProjectionFlag(projection, GLB_FREE,27);
+    // glbSetProjectionFlag(projection, GLB_FREE,29);  
 
     glbSetProjectionFlag(projection, GLB_FIXED,para1);
     glbSetProjectionFlag(projection, GLB_FIXED,para2);
@@ -291,47 +287,23 @@ void Many_test( int para1, int para2, double *min ) {
   else if ( para1 == 1 || para2 == 1 ) {
     ParaNode test1 = findNotTwoPara(para1,para2,1);
     ParaNode test2 = findNotTwoPara(para1,para2,2);
-    ParaNode test3 = findNotTwoPara(para1,para2,3);
-    ParaNode test4 = findNotTwoPara(para1,para2,4);
-    ParaNode test5 = findNotTwoPara(para1,para2,5);
     for ( double d1 = test1.lower_limit_test ; d1 < test1.upper_limit_test ; d1 += test1.step_test ){
       glbSetOscParams(test_values, d1, test1.key);
       for ( double d2 = test2.lower_limit_test ; d2 < test2.upper_limit_test ; d2+= test2.step_test ){
         glbSetOscParams(test_values, d2, test2.key);
-        for ( double d3 = test3.lower_limit_test ; d3 < test3.upper_limit_test ; d3+= test3.step_test ) {
-          glbSetOscParams(test_values, d3, test3.key);
-          for ( double d4 = test4.lower_limit_test ; d4 < test4.upper_limit_test ; d4+= test4.step_test ) {
-            glbSetOscParams(test_values, d4, test4.key);
-            for ( double d5 = test5.lower_limit_test ; d5 < test5.upper_limit_test ; d5+= test5.step_test ) {
-              glbSetOscParams(test_values, d5, test5.key);
               res=glbChiNP(test_values,NULL,GLB_ALL);
               if(res<*min)
                 *min=res;
-            }
-          }
-        }
       }
     }
   }
-else {
+  else {  
     ParaNode test1 = findNotTwoPara(para1,para2,2);
-    ParaNode test2 = findNotTwoPara(para1,para2,3);
-    ParaNode test3 = findNotTwoPara(para1,para2,4);
-    ParaNode test4 = findNotTwoPara(para1,para2,5);
     for ( double d1 = test1.lower_limit_test ; d1 < test1.upper_limit_test ; d1 += test1.step_test ){
       glbSetOscParams(test_values, d1, test1.key);
-      for ( double d2 = test2.lower_limit_test ; d2 < test2.upper_limit_test ; d2+= test2.step_test ){
-        glbSetOscParams(test_values, d2, test2.key);
-        for ( double d3 = test3.lower_limit_test ; d3 < test3.upper_limit_test ; d3+= test3.step_test ) {
-          glbSetOscParams(test_values, d3, test3.key);
-          for ( double d4 = test4.lower_limit_test ; d4 < test4.upper_limit_test ; d4+= test4.step_test ) {
-            glbSetOscParams(test_values, d4, test4.key);
             res=glbChiNP(test_values,NULL,GLB_ALL);
             if(res<*min)
               *min=res;
-          }
-        }
-      }
     }
   }
 }
@@ -361,19 +333,7 @@ else {
 }
 
 /*
-nohup ./two_para 1 2 3 > 0313.log &
-nohup ./two_para 1 3 3 > 0313.log &
-nohup ./two_para 1 25 3 > 0313.log &
-nohup ./two_para 1 27 3 > 0313.log &
-nohup ./two_para 1 29 3 > 0313.log &
-nohup ./two_para 2 3 3 > 0313.log &
-nohup ./two_para 2 25 3 > 0313.log &
-nohup ./two_para 2 27 3 > 0313.log &
-nohup ./two_para 2 29 3 > 0313.log &
-nohup ./two_para 3 25 3 > 0313.log &
-nohup ./two_para 3 27 3 > 0313.log &
-nohup ./two_para 3 29 3 > 0313.log &
-nohup ./two_para 25 27 3 > 0313.log &
-nohup ./two_para 25 29 3 > 0313.log &
-nohup ./two_para 27 29 3 > 0313.log &
+nohup ./two_para_no_nsi 1 2 3 > 0313.log &
+nohup ./two_para_no_nsi 1 3 3 > 0313.log &
+nohup ./two_para_no_nsi 2 3 3 > 0313.log &
 */
