@@ -30,7 +30,7 @@ double my_prior(const glb_params in, void* user_data)//Mark
 
     /*
      theta12     0    FIXED
-     theta13    1  
+     theta13    1  FIXED
      theta23:  2
      deltacp   3
      sdm  4           FIXED
@@ -87,19 +87,19 @@ void SetParaNode( int i, int key, char para_name[], float lower_limit_true, floa
   paras[i].step_test = step_test;
 }
 
-// void ParaInit() {
-//   SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.0077 *degree*10, 0 , 0 , 0 );
-//   SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree*10, 40 *degree, 50.1 *degree,  5 *degree);
-//   SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree*10,   0 *degree , 360*degree, 90 *degree);
-//   SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.514e-3 , 2.515e-3, 2.514e-3*2);
-// } 
-
 void ParaInit() {
-  SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.0077 *degree, 0 , 0 , 0 );
-  SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree, 40 *degree, 50.1 *degree,  5 *degree);
-  SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree,   0 *degree , 360*degree, 90 *degree);
+  SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.0077 *degree*10, 0 , 0 , 0 );
+  SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree*10, 40 *degree, 50.1 *degree,  5 *degree);
+  SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree*10,   0 *degree , 360*degree, 90 *degree);
   SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.514e-3 , 2.515e-3, 2.514e-3*2);
 } 
+
+// void ParaInit() {
+//   SetParaNode( 0, 1, "theta13" , 8.2 *degree, 8.97 *degree, 0.0077 *degree, 0 , 0 , 0 );
+//   SetParaNode( 1, 2, "theta23", 35 *degree, 55.1 *degree,  0.2 *degree, 40 *degree, 50.1 *degree,  5 *degree);
+//   SetParaNode( 2, 3, "deltacp",   0 *degree , 360*degree,  3.6 *degree,   0 *degree , 360*degree, 90 *degree);
+//   SetParaNode( 3, 5, "ldm" ,   0,    0,    0, -2.514e-3 , 2.515e-3, 2.514e-3*2);
+// } 
 
 ParaNode findPara( int key ) {
   for ( int i = 0 ; i < 4 ; i++ ) {
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
 
     /*
      theta12     0    FIXED
-     theta13    1  
+     theta13    1     FIXED
      theta23:  2
      deltacp   3
      sdm  4           FIXED
@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
      */
 
 
-    glbSetProjectionFlag(projection, GLB_FREE,1);
+
     glbSetProjectionFlag(projection, GLB_FREE,2);
     glbSetProjectionFlag(projection, GLB_FREE,3);
     glbSetProjectionFlag(projection, GLB_FREE,5);
@@ -333,7 +333,7 @@ void Many_test( int para1, int para2, double *min ) {
 }
 
 /*
-nohup ./two_para_no_nsi 1 2 3 > 0313.log &
-nohup ./two_para_no_nsi 1 3 3 > 0313.log &
-nohup ./two_para_no_nsi 2 3 3 > 0313.log &
+nohup ./two_para_no_nsi 1 2 4 > 0313.log &
+nohup ./two_para_no_nsi 1 3 4 > 0313.log &
+nohup ./two_para_no_nsi 2 3 4 > 0313.log &
 */

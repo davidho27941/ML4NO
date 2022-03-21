@@ -30,7 +30,7 @@ double my_prior(const glb_params in, void* user_data)//Mark
 
     /*
      theta12     0    FIXED
-     theta13    1  
+     theta13    1   FIXED
      theta23:  2
      deltacp   3
      sdm  4           FIXED
@@ -159,38 +159,40 @@ int main(int argc, char *argv[])
                                  NULL);
     
     /* Define true oscillation parameters */ //Mark
-    double theta12, theta13, theta23;
-    double sdm       = 0.0;
-    double ldm       = 0.0;
-    double deltacp   = 0.0;;
+    double theta12 = 3.344e1;
+    double theta13 = 8.57; 
+    double theta23 = 49;
+    double deltacp   = 195;
+    double sdm       = 7.42;
+    double ldm       = 2.514;
     double ee        = 0.0;
     double mumu      = 0.0;
     double tautau    = 0.0;
     double emu       = 0.0;
     double etau      = 0.0;
     double mutau     = 0.0;
-    double phi_emu   = 0.0*M_PI;
-    double phi_etau = 0.0*M_PI;
-    double phi_mutau = 0.0*M_PI;
+    double phi_emu   = 0.0;
+    double phi_etau = 0.0;
+    double phi_mutau = 0.0;
     
     
-        FILE* fp_chans_para = fopen("./parameters/parameters","r");
-        int num_chans=0;    int ret;        
-        if (fp_chans_para == NULL) {
-            printf ("Cannot open file parameters/parameters \n");
-            exit(0);
-        }
-        char chbuf[1000];
-        num_chans=0;
-        while (!feof(fp_chans_para)) {
-            fgets(chbuf,1000,fp_chans_para);
-            if (chbuf != NULL) {/*0:MC OFF*/
-                ret = sscanf(chbuf,"%lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg",\
-                &theta12,&theta13,&theta23,&deltacp,&sdm,&ldm,&ee,&mumu,&tautau,&emu,&etau,&mutau,&phi_emu,&phi_etau,&phi_mutau);
-                num_chans++;
-            }
-        }
-        fclose(fp_chans_para);
+        // FILE* fp_chans_para = fopen("./parameters/parameters","r");
+        // int num_chans=0;    int ret;        
+        // if (fp_chans_para == NULL) {
+        //     printf ("Cannot open file parameters/parameters \n");
+        //     exit(0);
+        // }
+        // char chbuf[1000];
+        // num_chans=0;
+        // while (!feof(fp_chans_para)) {
+        //     fgets(chbuf,1000,fp_chans_para);
+        //     if (chbuf != NULL) {/*0:MC OFF*/
+        //         ret = sscanf(chbuf,"%lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg %lg",\
+        //         &theta12,&theta13,&theta23,&deltacp,&sdm,&ldm,&ee,&mumu,&tautau,&emu,&etau,&mutau,&phi_emu,&phi_etau,&phi_mutau);
+        //         num_chans++;
+        //     }
+        // }
+        // fclose(fp_chans_para);
     
     printf("input values %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g\n",\
     theta12,theta13,theta23,deltacp,sdm,ldm,ee,mumu,tautau,emu,etau,mutau,phi_emu,phi_etau,phi_mutau);
@@ -252,7 +254,7 @@ int main(int argc, char *argv[])
 
     /*
      theta12     0    FIXED
-     theta13    1  
+     theta13    1     FIXED
      theta23:  2
      deltacp   3
      sdm  4           FIXED
@@ -265,7 +267,6 @@ int main(int argc, char *argv[])
      */
 
 
-    glbSetProjectionFlag(projection, GLB_FREE,1);
     glbSetProjectionFlag(projection, GLB_FREE,2);
     glbSetProjectionFlag(projection, GLB_FREE,3);
     glbSetProjectionFlag(projection, GLB_FREE,5);
