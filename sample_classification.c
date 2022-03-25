@@ -1,4 +1,6 @@
 /* 生成sample for Classification */
+/* Dune 都66個bin*/
+/* T2HK 8/12/8/12*/
 /* theta12, m21 fixed */
 /* theta23, theta13, m31 flat distribution in 3 sigma range */
 /* deltacp flat distribution in 0~360 , # at 0 & 180 account for 50% */
@@ -129,7 +131,7 @@ int main(int argc, char *argv[])
   /* Set standard oscillation parameters (cf. hep-ph/0405172v5) */
 
     FILE* BIN =   fopen("bin_setup_classification.dat","w");//建立輸出檔案
-    FILE* OUT =   fopen("sample_classification.dat","w");//建立輸出檔案
+    FILE* OUT =   fopen("ver0_sample_classification.dat","w");//建立輸出檔案
     
   double theta12_c = 33.44; 
   // double theta13_c = 8.57;
@@ -223,14 +225,14 @@ int count = 0;
   count += 1;
   }
   //printf("count = %d \n",count);
-  //printf("%i %i %i \n",exp,channel,ew_high-ew_low);
+  printf("%i %i %i %i \n",exp,channel,ew_low,ew_high);
   }
   }
 
     // double chi2;
     // chi2=glbChiSys(test_values,GLB_ALL,GLB_ALL);
     fprintf(OUT,"  %g %g %g %g %g %g %i %i %i\n",theta12_c,theta13,theta23,deltacp,sdm_c,ldm,OCTANT,CPV,MO);
-    printf("%i \n",location);  
+    //printf("%i \n",location);  
   }
   /* Clean up */
   glbFreeParams(true_values);

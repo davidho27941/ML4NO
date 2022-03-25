@@ -362,19 +362,19 @@ else {
 }
 
 /*
-nohup ./two_para 1 2 3 > 0313.log &
-nohup ./two_para 1 3 3 > 0313.log &
-nohup ./two_para 1 25 3 > 0313.log &
-nohup ./two_para 1 27 3 > 0313.log &
-nohup ./two_para 1 29 3 > 0313.log &
-nohup ./two_para 2 3 3 > 0313.log &
-nohup ./two_para 2 25 3 > 0313.log &
-nohup ./two_para 2 27 3 > 0313.log &
-nohup ./two_para 2 29 3 > 0313.log &
-nohup ./two_para 3 25 3 > 0313.log &
-nohup ./two_para 3 27 3 > 0313.log &
-nohup ./two_para 3 29 3 > 0313.log &
-nohup ./two_para 25 27 3 > 0313.log &
-nohup ./two_para 25 29 3 > 0313.log &
-nohup ./two_para 27 29 3 > 0313.log &
+nohup ./two_para 1 2 5 > 0313.log &
+nohup ./two_para 1 3 5 > 0313.log &
+nohup ./two_para 1 25 5 > 0313.log &
+nohup ./two_para 1 27 5 > 0313.log &
+nohup ./two_para 1 29 5 > 0313.log &
+nohup ./two_para 2 3 5 > 0313.log &
+nohup ./two_para 2 25 5 > 0313.log &
+nohup ./two_para 2 27 5 > 0313.log &
+nohup ./two_para 2 29 5 > 0313.log &
+nohup ./two_para 3 25 5 > 0313.log &
+nohup ./two_para 3 27 5 > 0313.log &
+nohup ./two_para 3 29 5 > 0313.log &
+nohup ./two_para 25 27 5 > 0313.log &
+nohup ./two_para 25 29 5 > 0313.log &
+nohup ./two_para 27 29 5 > 0313.log &
 */
