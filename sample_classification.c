@@ -129,9 +129,12 @@ int main(int argc, char *argv[])
     glb_params true_values = glbAllocParams();
 
   /* Set standard oscillation parameters (cf. hep-ph/0405172v5) */
-
+    int version = atof(argv[1]);
+    int TOTALsample = atof(argv[2]);
+    char filename[256];
+    sprintf(filename,"./output_training_data/ver%i_sample_allflat_numbers%i.dat",version,TOTALsample);
     FILE* BIN =   fopen("bin_setup_classification.dat","w");//建立輸出檔案
-    FILE* OUT =   fopen("ver0_sample_classification.dat","w");//建立輸出檔案
+    FILE* OUT =   fopen(filename,"w");//建立輸出檔案
     
   double theta12_c = 33.44; 
   // double theta13_c = 8.57;
@@ -151,7 +154,7 @@ int main(int argc, char *argv[])
   
   int location;
   // int TOTALsample=1000000 ;//choosed by the user 
-  int TOTALsample = atof(argv[1]);
+
 
     int ew_low, ew_high;
     int i,exp,channel;
