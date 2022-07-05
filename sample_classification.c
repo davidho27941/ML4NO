@@ -225,7 +225,7 @@ int count = 0;
   count += 1;
   }
   //printf("count = %d \n",count);
-  printf("%i %i %i %i \n",exp,channel,ew_low,ew_high);
+  //printf("%i %i %i %i \n",exp,channel,ew_low,ew_high);
   }
   }
 
